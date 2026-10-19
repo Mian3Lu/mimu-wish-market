@@ -82,6 +82,13 @@ html[data-theme=dark]{color-scheme:dark;--bg:#13151a;--surface:#1e2026;--surface
 const SUPABASE_URL = 'https://issrxjtupbdahjbemkyy.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_zKfL0ufjfW5Iy0A1VJaDnw_-DA-Y0nX';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let passwordRecoveryPending=false;
+supabase.auth.onAuthStateChange(event=>{
+  if(event==='PASSWORD_RECOVERY'){
+    passwordRecoveryPending=true;
+    setTimeout(showPasswordReset,0);
+  }
+});
 
 const ICONS={
 search:'<circle cx="11" cy="11" r="7.5"/><path d="m16.5 16.5 5 5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',moon:'<path d="M20.5 14.7A8.6 8.6 0 0 1 9.3 3.5a8.8 8.8 0 1 0 11.2 11.2Z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',plus:'<path d="M12 5v14M5 12h14"/>','arrow-right':'<path d="M5 12h14m-6-6 6 6-6 6"/>','arrow-left':'<path d="M19 12H5m6 6-6-6 6-6"/>','arrow-up':'<path d="M12 19V5m-6 6 6-6 6 6"/>','chevron-right':'<path d="m9 18 6-6-6-6"/>','chevron-down':'<path d="m6 9 6 6 6-6"/>',heart:'<path d="M20.8 4.7a5.3 5.3 0 0 0-7.5 0L12 6l-1.3-1.3a5.3 5.3 0 0 0-7.5 7.5L12 21l8.8-8.8a5.3 5.3 0 0 0 0-7.5Z"/>',home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1Z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',bookmark:'<path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',sliders:'<path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',sparkles:'<path d="m12 2 2.1 6 6 2.1-6 2.1L12 18l-2.1-5.8L4 10.1l5.9-2.1L12 2Zm7 13 1 2.5L22 18l-2 1-1 2.5-1-2.5-2-1 2-1 1-2.5Z"/>',route:'<circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M8 5h6a5 5 0 0 1 0 10H9a4 4 0 0 0 0 8"/>','pen-line':'<path d="m12 19 9-9-7-7-9 9-2 9 9-2Z"/><path d="m10 7 7 7"/>','hand-heart':'<path d="M3 15v4l6 2h7l5-7c1-2-1-3-2-2l-4 4h-5"/><path d="M3 14h4l3-3h6c2 0 2 3 0 3h-5"/><path d="M15 4c1-2 5-1 5 2 0 2-5 5-5 5s-5-3-5-5c0-3 4-4 5-2Z"/>',brush:'<path d="m14 4 6 6-8 8-6-6 8-8Z"/><path d="M5 15c-2 0-3 1-3 3 0 3-1 4-1 4s2-1 4-1c2 0 3-1 3-3"/>','check-circle':'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/>',message:'<path d="M4 4h16v13H9l-5 4V4Z"/>',send:'<path d="m21 3-8 18-3-8-8-3 19-7Z"/><path d="M10 13 21 3"/>',location:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',external:'<path d="M13 5h6v6m0-6-9 9"/><path d="M19 13v6H5V5h6"/>',copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',check:'<path d="m4 12 5 5L20 6"/>','circle-dot':'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',edit:'<path d="M12 20H4v-8l10-10 8 8-10 10Z"/><path d="m12 4 8 8"/>',trash:'<path d="M4 7h16m-3 0-1 14H8L7 7m2 0V4h6v3"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/>',filter:'<path d="M3 4h18l-7 8v7l-4 2v-9L3 4Z"/>'};
@@ -516,13 +523,28 @@ async function handleForm(form){
   const kind=form.dataset.form, fd=new FormData(form), id=form.dataset.id;
   
   if(kind==='adminLogin'){
-    const email=String(fd.get('email')||'');
+    const email=String(fd.get('email')||'').trim();
     const password=String(fd.get('password')||'');
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if(error){ toast('登录失败：' + error.message); return; }
+    if(error){ toast(error.message==='Invalid login credentials'?'登录失败：邮箱或密码不正确，请核对 Supabase Auth 账号或重设密码。':'登录失败：' + error.message); return; }
+    currentUser=data.user;
     await checkAdmin();
-    if(!isAdminUser){ toast('该账号不在管理员白名单中'); return; }
-    render(); closeModal(); adminDashboard(); toast('成功登录管理员后台！');
+    if(!isAdminUser){ await render(); toast('登录成功，但该账号尚未加入管理员白名单'); return; }
+    localStorage.setItem('mimu_admin_email',email);
+    await render(); closeModal(); adminDashboard(); toast('成功登录管理员后台！');
+    return;
+  }
+  if(kind==='adminPasswordReset'){
+    const password=String(fd.get('password')||'');
+    if(password.length<8)return toast('新密码至少需要 8 个字符');
+    if(password!==String(fd.get('confirmPassword')||''))return toast('两次输入的密码不一致');
+    const {data,error}=await supabase.auth.updateUser({password});
+    if(error)return toast('重设失败：'+error.message);
+    passwordRecoveryPending=false;
+    currentUser=data.user;
+    await checkAdmin();
+    await render(); closeModal();
+    toast(isAdminUser?'密码已更新，可以使用管理员后台':'密码已更新，但此账号没有管理员权限');
     return;
   }
   if(kind==='modDeletePost'){
@@ -663,8 +685,16 @@ function renderAdminState(){
 
 function loginAdmin(){
   if(isAdmin())return adminDashboard();
-  openModal('管理员登录',`<div class="mod-lock">${ic('lock')}</div><p class="form-lead" style="text-align:center">请输入你在 Supabase 后台注册的管理员账号与密码。</p><form data-form="adminLogin" autocomplete="off"><div class="form-field"><label class="form-label" for="adminEmail">管理员邮箱</label><input id="adminEmail" name="email" type="email" required placeholder="admin@example.com"></div><div class="form-field"><label class="form-label" for="adminPassword">密码</label><input id="adminPassword" name="password" type="password" required placeholder="输入密码"></div><div class="form-foot"><button type="submit" class="primary-button">${ic('shield-check','sm')} 登录后台</button></div></form>`,{type:'adminLogin'});
-  setTimeout(()=>$('#adminEmail')?.focus(),80);
+  const savedEmail=localStorage.getItem('mimu_admin_email')||'';
+  const emailField=savedEmail?`<p class="form-lead" style="text-align:center">管理员账号：${esc(savedEmail)} <button type="button" class="go-back" data-action="adminSwitchAccount" style="display:inline;padding:0">切换账号</button></p><input type="hidden" name="email" value="${esc(savedEmail)}">`:`<p class="form-lead" style="text-align:center">首次登录请输入 Supabase Auth 中的邮箱和密码。</p><div class="form-field"><label class="form-label" for="adminEmail">管理员邮箱</label><input id="adminEmail" name="email" type="email" autocomplete="username" required placeholder="admin@example.com"></div>`;
+  openModal('管理员登录',`<div class="mod-lock">${ic('lock')}</div><form data-form="adminLogin">${emailField}<div class="form-field"><label class="form-label" for="adminPassword">密码</label><input id="adminPassword" name="password" type="password" autocomplete="current-password" required placeholder="输入密码"></div><div class="form-foot"><button type="submit" class="primary-button">${ic('shield-check','sm')} 登录后台</button></div></form>`,{type:'adminLogin'});
+  setTimeout(()=>$(savedEmail?'#adminPassword':'#adminEmail')?.focus(),80);
+}
+
+function showPasswordReset(){
+  if(!passwordRecoveryPending)return;
+  openModal('设置新密码',`<p class="form-lead">已通过邮箱验证身份。请设置新的管理员密码。</p><form data-form="adminPasswordReset"><div class="form-field"><label class="form-label" for="newAdminPassword">新密码</label><input id="newAdminPassword" name="password" type="password" autocomplete="new-password" minlength="8" required></div><div class="form-field"><label class="form-label" for="confirmAdminPassword">再次输入新密码</label><input id="confirmAdminPassword" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required></div><div class="form-foot"><button type="submit" class="primary-button">保存新密码</button></div></form>`,{type:'adminPasswordReset'});
+  setTimeout(()=>$('#newAdminPassword')?.focus(),80);
 }
 
 async function logoutAdmin(){
@@ -745,6 +775,7 @@ function dispatchAction(btn,event){
   const a=btn.dataset.action, id=btn.dataset.id;
   if(PREVIEW_MODE&&['create','like','save','claim','report','editClaimStatus','modDeletePost','modDeleteComment','modResetClaim','modResolve','modRemoveClaim','unclaim'].includes(a))return toast('只读预览模式：此操作不会连接 Supabase');
   if(a==='adminEntry')return PREVIEW_MODE?previewDashboard():(isAdmin()?adminDashboard():loginAdmin());
+  if(a==='adminSwitchAccount'){localStorage.removeItem('mimu_admin_email');return loginAdmin()}
   if(a==='adminLogout')return logoutAdmin();
   if(a==='adminDashboard')return adminDashboard();
   if(a==='modTab')return adminDashboard(btn.dataset.tab);
@@ -885,6 +916,7 @@ $('#feed').addEventListener('touchend',e=>{
     toast(`云端登录失败：${error.message||'请检查 Supabase Auth 和网络配置'}`);
   }
   await render();
+  if(passwordRecoveryPending)showPasswordReset();
 })();
 
 })();
