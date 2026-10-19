@@ -687,8 +687,15 @@ function loginAdmin(){
   if(isAdmin())return adminDashboard();
   const savedEmail=localStorage.getItem('mimu_admin_email')||'';
   const emailField=savedEmail?`<p class="form-lead" style="text-align:center">管理员账号：${esc(savedEmail)} <button type="button" class="go-back" data-action="adminSwitchAccount" style="display:inline;padding:0">切换账号</button></p><input type="hidden" name="email" value="${esc(savedEmail)}">`:`<p class="form-lead" style="text-align:center">首次登录请输入 Supabase Auth 中的邮箱和密码。</p><div class="form-field"><label class="form-label" for="adminEmail">管理员邮箱</label><input id="adminEmail" name="email" type="email" autocomplete="username" required placeholder="admin@example.com"></div>`;
-  openModal('管理员登录',`<div class="mod-lock">${ic('lock')}</div><form data-form="adminLogin">${emailField}<div class="form-field"><label class="form-label" for="adminPassword">密码</label><input id="adminPassword" name="password" type="password" autocomplete="current-password" required placeholder="输入密码"></div><div class="form-foot"><button type="submit" class="primary-button">${ic('shield-check','sm')} 登录后台</button></div></form>`,{type:'adminLogin'});
+  openModal('管理员登录',`<div class="mod-lock">${ic('lock')}</div><form data-form="adminLogin">${emailField}<div class="form-field"><label class="form-label" for="adminPassword">密码</label><input id="adminPassword" name="password" type="password" autocomplete="current-password" required placeholder="输入密码"></div><div class="form-foot"><button type="button" class="go-back" data-action="adminForgotPassword" style="padding:0">忘记密码？</button><button type="submit" class="primary-button">${ic('shield-check','sm')} 登录后台</button></div></form>`,{type:'adminLogin'});
   setTimeout(()=>$(savedEmail?'#adminPassword':'#adminEmail')?.focus(),80);
+}
+
+async function sendAdminRecovery(){
+  const email=String($('#adminEmail')?.value||localStorage.getItem('mimu_admin_email')||'').trim();
+  if(!email)return toast('请先填写管理员邮箱');
+  const {error}=await supabase.auth.resetPasswordForEmail(email);
+  toast(error?'找回邮件发送失败：'+error.message:'如果该邮箱已注册，找回密码邮件已发送。请查看收件箱。');
 }
 
 function showPasswordReset(){
@@ -776,6 +783,7 @@ function dispatchAction(btn,event){
   if(PREVIEW_MODE&&['create','like','save','claim','report','editClaimStatus','modDeletePost','modDeleteComment','modResetClaim','modResolve','modRemoveClaim','unclaim'].includes(a))return toast('只读预览模式：此操作不会连接 Supabase');
   if(a==='adminEntry')return PREVIEW_MODE?previewDashboard():(isAdmin()?adminDashboard():loginAdmin());
   if(a==='adminSwitchAccount'){localStorage.removeItem('mimu_admin_email');return loginAdmin()}
+  if(a==='adminForgotPassword')return sendAdminRecovery();
   if(a==='adminLogout')return logoutAdmin();
   if(a==='adminDashboard')return adminDashboard();
   if(a==='modTab')return adminDashboard(btn.dataset.tab);
