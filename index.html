@@ -120,6 +120,7 @@ const palettes=['mint','pink','cream','blue','plum','sage','peach','charcoal'];
 
 let currentUser=null;
 let isAdminUser=false;
+let lastCloudFetch=0;
 let localData={
   posts:[],
   likes:[],
@@ -145,7 +146,8 @@ async function initAuth(){
   }
   if(!session?.user) throw new Error('Supabase 未返回有效会话');
   currentUser = session.user;
-  await checkAdmin();
+  if(currentUser.is_anonymous)isAdminUser=false;
+  else await checkAdmin();
 }
 
 async function checkAdmin(){
@@ -167,21 +169,22 @@ async function fetchCloudData(){
       {id:'preview-5',category:'疑问',title:'这个功能应该怎么设置？',body:'我想调整消息气泡宽度，但找不到对应的入口。',author:'柚子汽水',authorId:'preview-author-5',art:'note',palette:'sage',ratio:.8,createdAt:new Date(now-43200000).toISOString(),likes:6,claims:[],comments:[],status:'open'},
       {id:'preview-6',category:'世界书',title:'海边小镇世界书设定',body:'需要地点、人物关系和一些可继续扩写的故事钩子。',author:'小岛来信',authorId:'preview-author-6',art:'book',palette:'mint',ratio:.84,createdAt:new Date(now-86400000).toISOString(),likes:31,claims:[],comments:[],status:'open'}
     ];
-    localData.posts=demo.filter(p=>!(localData.preview.hidden||[]).includes(p.id)).map(p=>({...p,...(localData.preview.posts?.[p.id]||{})}));localData.reports=[];localData.likes=[];return;
+    localData.posts=demo.filter(p=>!(localData.preview.hidden||[]).includes(p.id)).map(p=>({...p,...(localData.preview.posts?.[p.id]||{})}));localData.reports=[];localData.likes=[];lastCloudFetch=Date.now();return;
   }
   try {
     const basePostFields='id,author_id,author_name,category,title,body,art,palette,ratio,cover_image,status,likes_count,is_deleted,created_at';
-    let postsRes=await supabase.from('posts').select(`${basePostFields},card_style`).eq('is_deleted', false).order('created_at', { ascending: false });
-    if(postsRes.error&&/card_style/i.test(postsRes.error.message||'')&&/schema cache|column/i.test(postsRes.error.message||'')){
-      postsRes=await supabase.from('posts').select(basePostFields).eq('is_deleted', false).order('created_at', { ascending: false });
-    }
-    const [claimsRes, privateClaimsRes, commentsRes, likesRes, reportsRes] = await Promise.all([
+    const [initialPostsRes, claimsRes, privateClaimsRes, commentsRes, likesRes, reportsRes] = await Promise.all([
+      supabase.from('posts').select(`${basePostFields},card_style`).eq('is_deleted', false).order('created_at', { ascending: false }),
       supabase.from('claim_feed').select('*'),
       supabase.from('claims').select('uid,post_id,creator_id,name,note,status,hidden_before_done,media,delivery,created_at').order('created_at', { ascending: true }),
       supabase.from('comments').select('*').order('created_at', { ascending: true }),
       supabase.from('likes').select('post_id').eq('user_id', currentUser.id),
-      supabase.from('reports').select('*')
+      isAdminUser?supabase.from('reports').select('*'):Promise.resolve({data:[]})
     ]);
+    let postsRes=initialPostsRes;
+    if(postsRes.error&&/card_style/i.test(postsRes.error.message||'')&&/schema cache|column/i.test(postsRes.error.message||'')){
+      postsRes=await supabase.from('posts').select(basePostFields).eq('is_deleted', false).order('created_at', { ascending: false });
+    }
 
     const claimsMap = {};
     const privateClaims = new Map((privateClaimsRes.data || []).map(c=>[c.uid,c]));
@@ -252,6 +255,7 @@ async function fetchCloudData(){
         delivery: pClaims.find(c => c.status === 'done' && c.delivery)?.delivery || null
       };
     });
+    lastCloudFetch=Date.now();
   } catch(e) {
     console.error('获取云端数据失败:', e);
   }
@@ -342,9 +346,9 @@ function renderStats(){
   $('#statsBox').innerHTML=`<div><div class="stat-num">${n}</div><div class="stat-label">收集到的愿望</div></div><div><div class="stat-num">${done}</div><div class="stat-label">已经实现</div></div><div><div class="stat-num">${doing}</div><div class="stat-label">正在被制作</div></div><div><div class="stat-num">${localData.posts.filter(p=>p.status==='open').length}</div><div class="stat-label">等待灵感认领</div></div>`
 }
 
-async function render(){
+async function render(refresh=true){
   if(PREVIEW_MODE)$('#previewBanner').hidden=false;
-  await fetchCloudData();
+  if(refresh)await fetchCloudData();
   renderAdminState();
   renderNav();
   renderCats();
@@ -359,8 +363,8 @@ async function render(){
   hydrateIcons();
 }
 
-function setView(v){state.view=v;state.cat='全部';state.status='全部状态';state.filtersOpen=false;state.query='';$('#searchInput').value='';$('#clearSearch').style.display='none';render();window.scrollTo({top:0,behavior:'smooth'})}
-function setCat(cat){state.cat=cat;state.view='feed';state.status='全部状态';render();$('#categoryTabs').querySelector('.active')?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});window.scrollTo({top:0,behavior:'smooth'})}
+function setView(v){state.view=v;state.cat='全部';state.status='全部状态';state.filtersOpen=false;state.query='';$('#searchInput').value='';$('#clearSearch').style.display='none';render(false);window.scrollTo({top:0,behavior:'smooth'})}
+function setCat(cat){state.cat=cat;state.view='feed';state.status='全部状态';render(false);$('#categoryTabs').querySelector('.active')?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});window.scrollTo({top:0,behavior:'smooth'})}
 
 async function like(id){
   const liked = localData.likes.includes(id);
@@ -374,7 +378,7 @@ async function like(id){
     if(error)return toast('点赞失败：'+error.message);
   }
   await render();
-  if(state.modal?.type==='detail'&&state.modal.id===id) detail(id);
+  if(state.modal?.type==='detail'&&state.modal.id===id) detail(id,false);
 }
 
 function favorite(id){
@@ -383,8 +387,8 @@ function favorite(id){
   else localData.saved.push(id);
   saveLocalPref();
   toast(index>=0?'已取消收藏':'已加入我的收藏');
-  if(state.view==='saved') render();
-  if(state.modal?.type==='detail') detail(id);
+  if(state.view==='saved') render(false);
+  if(state.modal?.type==='detail') detail(id,false);
 }
 
 function openModal(title,body,meta){state.lastFocus=document.activeElement;state.modal=meta||{type:'misc'};$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalRoot').classList.add('is-open');document.body.style.overflow='hidden';$('.close-modal')?.focus({preventScroll:true});hydrateIcons($('#modalBody'))}
@@ -407,8 +411,8 @@ function claimMarkup(p,c){
   return `<section class="claim-block claim-block-v3"><div class="claim-head"><span class="claim-owner">${visible?`由 <strong>${esc(c.name)}</strong> 接单`:'一位创作者已接单'} ${owned?'<span class="mini-badge">我接的单</span>':''}</span><time class="claim-time">${dateText(c.date)}</time></div><div class="claim-state-row"><span class="mini-badge status-${status.cls}">${status.label}</span>${c.hiddenBeforeDone&&c.status!=='done'?`<span class="privacy-tag">${ic('eye','sm')} ${visible?'完成前隐藏署名':'完成后公开创作者信息'}</span>`:''}</div>${visible?`<p>${esc(c.note)}</p>${mediaHtml(c.media)}${c.delivery&&c.status==='done'?`<div class="delivery-box claim-delivery"><strong>${ic('check-circle','sm')} 文件已就位</strong><p>${esc(c.delivery.location||'')}</p>${c.delivery.url?`<a href="${esc(cleanUrl(c.delivery.url))}" target="_blank" rel="noopener noreferrer">${ic('external','sm')} 查看文件 / 文件夹</a>`:''}${c.delivery.note?`<p>${esc(c.delivery.note)}</p>`:''}</div>`:''}`:`<p class="private-note">接单说明与图片将在该创作者完成作品后公开，取消接单也不会显示昵称。</p>`}${owned?`<div class="claim-own-tools"><button type="button" class="primary-button" data-action="editClaimStatus" data-id="${esc(p.id)}" data-uid="${esc(c.uid)}">${ic('edit','sm')} 修改进度 / 文件位置</button><button type="button" class="outline-button" data-action="unclaim" data-id="${esc(p.id)}" data-uid="${esc(c.uid)}">撤回接单</button></div>`:''}${isAdmin()?`<button class="admin-remove-claim" data-action="modRemoveClaim" data-id="${esc(p.id)}" data-uid="${esc(c.uid)}">${ic('trash','sm')} 管理员移除该接单</button>`:''}</section>`;
 }
 
-async function detail(id){
-  await fetchCloudData();
+async function detail(id,refresh=true){
+  if(refresh&&Date.now()-lastCloudFetch>30000)await fetchCloudData();
   const p=postBy(id);if(!p)return;
   const s=STATUS[p.status],mine=!!ownedClaim(p),liked=localData.likes.includes(id),saved=localData.saved.includes(id);
   const n=claimsOf(p).length,free=n<MAX_CLAIMS;
@@ -601,7 +605,7 @@ async function handleForm(form){
     });
     if(error){ toast('接单失败: ' + error.message); return; }
     localData.pref.nickname=name; saveLocalPref();
-    await render(); detail(id); toast('接单成功！已同步云端');
+    await render(); detail(id,false); toast('接单成功！已同步云端');
     return;
   }
   if(kind==='claimStatus'){
@@ -621,7 +625,7 @@ async function handleForm(form){
       delivery: deliveryData
     }).eq('uid', c.uid);
     if(error){ toast('更新失败: ' + error.message); return; }
-    await render(); detail(id);
+    await render(); detail(id,false);
     toast(status==='done'?'已完成！文件位置已经显示在帖子里':'进度已更新');
     return;
   }
@@ -638,7 +642,7 @@ async function handleForm(form){
       media
     });
     if(error){ toast('留言失败: ' + error.message); return; }
-    await render(); detail(id); toast('留言发布成功');
+    await render(); detail(id,false); toast('留言发布成功');
     return;
   }
 }
@@ -754,7 +758,7 @@ async function modDeleteComment(id, cid){
   if(!confirm('确定删除这条留言吗？'))return;
   const {error}=await supabase.from('comments').update({is_deleted:true}).eq('id', cid);
   if(error)return toast('删除失败：'+error.message);
-  await render(); detail(id); toast('留言已删除');
+  await render(); detail(id,false); toast('留言已删除');
 }
 
 async function modRemoveClaim(id, uid){
@@ -762,7 +766,7 @@ async function modRemoveClaim(id, uid){
   if(!confirm('确定移除该创作者的接单吗？'))return;
   const {error}=await supabase.from('claims').update({is_deleted:true}).eq('uid', uid);
   if(error)return toast('移除失败：'+error.message);
-  await render(); detail(id); toast('已移除该份接单');
+  await render(); detail(id,false); toast('已移除该份接单');
 }
 
 async function modResetClaim(id){
@@ -770,7 +774,7 @@ async function modResetClaim(id){
   if(!confirm('清空该帖所有接单？'))return;
   const {error}=await supabase.from('claims').update({is_deleted:true}).eq('post_id', id);
   if(error)return toast('重置失败：'+error.message);
-  await render(); detail(id); toast('已清空接单');
+  await render(); detail(id,false); toast('已清空接单');
 }
 
 async function modResolve(rid){
@@ -823,7 +827,7 @@ function dispatchAction(btn,event){
     if(!confirm('确定撤回这份接单吗？'))return;
     supabase.from('claims').update({is_deleted:true}).eq('uid', c.uid).then(async({error})=>{
       if(error)return toast('撤回失败：'+error.message);
-      await render(); detail(id); toast('已撤回接单');
+      await render(); detail(id,false); toast('已撤回接单');
     });
     return;
   }
@@ -844,7 +848,7 @@ document.addEventListener('click',e=>{
   if(action){if(action.dataset.action==='open'&&e.target.closest('button[data-action]')&&e.target.closest('button[data-action]')!==action)return;dispatchAction(action,e);return}
   const v=e.target.closest('[data-view]');if(v){setView(v.dataset.view);if(v.dataset.view==='mine')showProfile();return}
   const cat=e.target.closest('[data-category]');if(cat){setCat(cat.dataset.category);return}
-  const st=e.target.closest('[data-status]');if(st){state.status=st.dataset.status;render();return}
+  const st=e.target.closest('[data-status]');if(st){state.status=st.dataset.status;render(false);return}
 });
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if((e.key==='Enter'||e.key===' ')&&e.target.matches('.post-card')){e.preventDefault();detail(e.target.dataset.id)}});
@@ -864,7 +868,7 @@ document.addEventListener('submit',async e=>{
     if(category===p.category)return toast('帖子已经在这个分区');
     const {data,error}=await supabase.from('posts').update({category}).eq('id',id).eq('is_deleted',false).select('id,category').maybeSingle();
     if(error||!data)return toast('修改分区失败：'+(error?.message||'帖子不存在或没有权限'));
-    await render();await detail(id);toast('帖子分区已更新');return;
+    await render();await detail(id,false);toast('帖子分区已更新');return;
   }
   if(e.target.dataset.form==='addCategory'){if(!isAdmin()&&!PREVIEW_MODE)return toast('需要管理员身份');const name=String(new FormData(e.target).get('category')||'').trim();if(name.length<1||name.length>16||categoryLabels().includes(name)||name==='全部')return toast('名称重复或长度不合适');if((localData.pref.customCats||[]).length>=30)return toast('自定义分区已达上限');localData.pref.customCats=[...(localData.pref.customCats||[]),name];saveLocalPref();saveLocalPreview();adminCategoryManager();renderCats();toast('分区已添加到本机预览');return}
   if(PREVIEW_MODE)return toast('只读预览模式：表单不会连接 Supabase');
@@ -907,15 +911,15 @@ $('#themeToggle').addEventListener('click',changeTheme);
 $('#brand-home').addEventListener('click',e=>{e.preventDefault();setView('feed')});
 $('#categoryNext').addEventListener('click',()=>$('#categoryTabs').scrollBy({left:180,behavior:'smooth'}));
 $('#toggleFilters').addEventListener('click',()=>{state.filtersOpen=!state.filtersOpen;renderStatus()});
-$('#searchInput').addEventListener('input',e=>{state.query=e.target.value;$('#clearSearch').style.display=state.query?'block':'none';render()});
-$('#clearSearch').addEventListener('click',()=>{$('#searchInput').value='';state.query='';$('#clearSearch').style.display='none';render()});
+$('#searchInput').addEventListener('input',e=>{state.query=e.target.value;$('#clearSearch').style.display=state.query?'block':'none';render(false)});
+$('#clearSearch').addEventListener('click',()=>{$('#searchInput').value='';state.query='';$('#clearSearch').style.display='none';render(false)});
 
 $('#mobileSearchButton').addEventListener('click',()=>{
   const el=$('#mobileSearchWrap');if(el.firstChild){el.innerHTML='';return}
   el.innerHTML=`<label class="mobile-searchbox">${ic('search','sm')}<input id="mobileSearch" placeholder="搜索你的灵感…" autocomplete="off"><button type="button" id="mobileSearchClear" class="outline-button" style="padding:4px 10px;min-height:25px;font-size:10px">取消</button></label>`;
   $('#mobileSearch').value=state.query;
-  $('#mobileSearch').addEventListener('input',e=>{state.query=e.target.value;$('#searchInput').value=state.query;render()});
-  $('#mobileSearchClear').addEventListener('click',()=>{state.query='';$('#searchInput').value='';el.innerHTML='';render()});
+  $('#mobileSearch').addEventListener('input',e=>{state.query=e.target.value;$('#searchInput').value=state.query;render(false)});
+  $('#mobileSearchClear').addEventListener('click',()=>{state.query='';$('#searchInput').value='';el.innerHTML='';render(false)});
   $('#mobileSearch').focus();
 });
 
