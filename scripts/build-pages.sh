@@ -5,5 +5,9 @@ set -euo pipefail
 rm -rf dist
 mkdir -p dist
 cp index.html dist/index.html
+cp manifest.webmanifest dist/manifest.webmanifest
+mkdir -p dist/assets
+cp assets/mimu-icon.png dist/assets/mimu-icon.png
+cp -R assets/app dist/assets/app
 
 echo "Cloudflare Pages output prepared in dist/"
