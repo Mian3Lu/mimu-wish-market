@@ -18,3 +18,6 @@ html[data-theme=dark] .text-poster.theme-mint{background:#1d2822}html[data-theme
 
 /* Legacy illustrative covers keep their structure within the monochrome theme. */
 .artwork{filter:grayscale(1)}
+/* The portrait itself remains the file picker, including keyboard access. */
+.user-avatar-picker input{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border-radius:inherit}
+.user-avatar-picker:focus-within{outline:2px solid var(--ink);outline-offset:3px}
