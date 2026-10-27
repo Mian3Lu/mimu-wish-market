@@ -22,3 +22,7 @@ v04 / v05 / v06 是逐步叠加功能的演示版本，**它们都尚未接入 S
 ### 版本管理约定
 
 建议后续将里程碑命名为 `v07-supabase-alpha.html` 等，并在新增归档条目后更新本表。线上部署以根目录 `index.html` 为准，不要把归档文件误设为首页。
+
+### 2026-10-27 升级前快照
+
+[v06-market-before-editorial.html](v06-market-before-editorial.html) 保存本次黑白灰改版前的完整主页面（包含 Supabase 接入尝试）。仅用于恢复与审查，不进入生产 dist。已有 v01–v06 历史文件均保留。
