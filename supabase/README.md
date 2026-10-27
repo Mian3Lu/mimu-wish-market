@@ -80,7 +80,29 @@ ZIP 中的 Supabase 页面有 JavaScript 重复声明与错误转义，配置值
 - 留言和接单的管理员操作仍会硬删除，无法恢复；管理页面的部分举报/日志状态仍以本地数据组织，未形成服务端完整审计流程。
 - `is_admin`、`sync_post_status` 等函数的 `search_path` 未固定，多个 `SECURITY DEFINER` 函数对客户端开放执行；Supabase 安全顾问也报告这些问题及匿名策略警告。
 
-因此本地页面的 Supabase 连接目前仅用于继续开发和验证，不代表项目已具备安全的线上权限。不要把当前 HTML 发布到公开 Cloudflare Pages 供用户写入。下一项数据库工作应新增 migration：先拆分/限制接单敏感详情、设为私有的图片访问、修复 RLS/列权限、接单并发约束与审计函数，再调整前端改用受控 RPC/安全视图。该核查只读进行，**没有修改线上数据库**。
+因此本地页面的 Supabase 连接目前仅用于继续开发和验证，不代表项目已具备安全的线上权限。Cloudflare 已有公开 Worker 部署；在数据库权限修复前，不要继续开放其线上写入功能或把新版本部署到生产。下一项数据库工作应新增 migration：先拆分/限制接单敏感详情、设为私有的图片访问、修复 RLS/列权限、接单并发约束与审计函数，再调整前端改用受控 RPC/安全视图。该核查只读进行，**没有修改线上数据库**。
 
 本地工作目录尚无 `.git` 或 `origin` 远端；当前 ZIP 也不含 Git 元数据。因此现在不能生成可用的 GitHub `git pull` 仓库地址。
+
+## 当前连接复核（2026-10-19）
+
+Codex Supabase 连接可访问 `mimu-wish-market`（project ref `issrxjtupbdahjbemkyy`），项目状态为 `ACTIVE_HEALTHY`。仓库 `index.html` 中的 Supabase URL 与启用中的 publishable key 和该项目匹配。2026-10-20 只读核对显示线上已有 2 条帖子、1 条接单、1 条管理员角色记录；帖子、接单、留言、收藏、点赞、举报和管理日志均未在此次核对中读取或改写。Security Advisor 仍报告公开 `SECURITY DEFINER` 函数可执行、可变 `search_path`、匿名访问策略以及 Auth 弱密码保护未开启等告警。
+
+本地目录没有 `.git`、GitHub remote 或 Cloudflare CLI，不能从本机拉取或推送 GitHub。Chrome 当前已登录的 Cloudflare 控制台中存在 `mimu-wish-market` Workers 部署，`workers.dev` 地址可访问，Workers Builds 显示关联仓库 `Mian3Lu/mimu-wish-market`、生产分支 `main`。原设置的构建命令为空、部署命令为 `npx wrangler deploy`、根目录为 `/`；构建详情显示当前静态资源输出目录为 `.`，可能把仓库文件一并作为公开资源。控制台还提示无法获取 GitHub 用户/组织信息，可能导致后续部署失败。已将 Workers Builds 的构建命令保存为 `bash scripts/build-pages.sh`，未触发新部署；GitHub main 尚未包含本地新增的构建脚本与 Wrangler 配置，需先同步这些文件再触发构建。
+
+已在本地工作目录准备 `scripts/build-pages.sh` 与 `wrangler.jsonc`，构建会把当前 `index.html` 写入 `dist/`，并让 Worker 只托管 `dist/`。Workers Builds 的 Build command 已设为 `bash scripts/build-pages.sh`、Deploy command 为 `npx wrangler deploy`、Root directory 为 `/`。Cloudflare Workers Builds 支持从关联 Git 仓库自动构建部署；Wrangler 静态资源配置使用 `assets.directory` 指向构建产物目录。Supabase 安全告警仍在，且本地变更尚未同步到 GitHub，因此没有把新站点版本部署到生产。
+
+## 权限加固记录（2026-10-20）
+
+新增的 [secure_mimu_rls_and_claim_media.sql](migrations/20261019155203_secure_mimu_rls_and_claim_media.sql) 与根目录页面配套，针对当前实际 schema 设计了以下修复：撤销业务表对 `anon` / `authenticated` 的宽泛表权限（包含 `TRUNCATE`），将角色表限制为本人只读，锁定帖子作者字段和计数列，限制接单/留言/举报为本人操作；隐藏接单内容由 `claim_feed` 视图按身份及可见状态投影；接单图片转入私有 `claim-media` bucket；三人接单使用帖子行锁和部分唯一索引；帖文、留言、接单改走软删除，管理员处理写入只读审计日志；点赞数由数据库触发器维护。权限验收脚本在 [rls_permissions.sql](tests/rls_permissions.sql)，只允许在一次性测试分支执行，结尾会回滚 fixture 数据。
+
+Supabase Dashboard 曾报告 `claim_feed` 为 `SECURITY DEFINER` 视图。不能只执行 `ALTER VIEW ... SET (security_invoker=true)`：原始 `claims` 表的 RLS 是本人/管理员可读，直接切换会让普通用户看不到市集中的其他接单摘要。现已在正式项目应用 [harden_claim_feed.sql](migrations/20261019163651_harden_claim_feed.sql)：公开视图改为读取脱敏的 `claim_public_summaries`，并设为 `security_invoker`；前端另外从 RLS 保护的 `claims` 表读取当前用户可访问的私有详情。
+
+根目录 `index.html` 已相应改为读取安全接单视图、按当前用户读取点赞、由数据库维护点赞数、使用私有接单图片并使用软删除。JavaScript 语法、静态构建与构建产物密钥扫描已通过。
+
+首份宽范围 RLS、权限与 Storage 迁移尚未通过验证，之前的生产应用请求被安全审查拒绝；不得通过其他路径绕过。不要部署依赖该首份迁移中新权限策略的页面版本。
+
+本迁移包含 PostgreSQL 触发器、列级授权和私有 Storage 策略，目前仅完成前端语法、构建和公开产物扫描，**没有在真实数据库上执行或验证 SQL**。用户拒绝创建付费测试分支并要求直接修改生产库；自动审批拒绝该生产应用，要求先验证风险。不得通过其他执行路径绕过。Supabase Auth 的“泄漏密码保护”仍需在 Dashboard 的 Auth 安全设置中开启。
+
+用户在 Dashboard 手动运行了首份迁移，因此它没有进入 Supabase 迁移历史。2026-10-20 随后通过 Supabase migration 工具应用了 `harden_claim_feed`（记录版本 `20261019163651`）。核验结果：`claim_feed` 含 `security_invoker=true` 并读取安全投影；1 条线上接单仍可通过视图读取；隐藏且未完成接单的私密字段泄漏数为 0。Advisor 的 `security_definer_view` ERROR 已消失。运行 `db push` 前仍需把手动执行的首份迁移与迁移历史对齐，避免重放；其他安全 WARN 仍待逐项处理。
 
