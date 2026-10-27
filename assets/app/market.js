@@ -34,7 +34,7 @@ const PREVIEW_MODE=new URLSearchParams(location.search).get('preview')==='1';
 const CATS=['全部','主题美化','世界书','App','心声','角色卡','其他'];
 const COVER_ART=['chat','book','app','note','other','paper'];
 const baseCategories=CATS.slice(1);
-const categoryLabels=()=>{const all=[...baseCategories,...(Array.isArray(localData.pref.customCats)?localData.pref.customCats:[])],order=Array.isArray(localData.pref.categoryOrder)?localData.pref.categoryOrder:[],picked=order.filter(c=>all.includes(c));return[...picked,...all.filter(c=>!picked.includes(c))]};
+const categoryLabels=()=>{const all=[...new Set([...baseCategories,...(localData.posts||[]).map(p=>p.category),...(Array.isArray(localData.pref.customCats)?localData.pref.customCats:[])])],order=Array.isArray(localData.pref.categoryOrder)?localData.pref.categoryOrder:[],picked=order.filter(c=>all.includes(c));return[...picked,...all.filter(c=>!picked.includes(c))]};
 const FILTERS=['全部状态','等待接单','已接单','制作中','已完成'];
 const STATUS={open:{label:'等待接单',cls:'open'},claimed:{label:'已接单',cls:'claimed'},working:{label:'制作中',cls:'working'},done:{label:'已完成',cls:'done'}};
 const palettes=['mint','pink','cream','blue','plum','sage','peach','charcoal'];
@@ -104,6 +104,8 @@ async function fetchCloudData(){
     localData.posts=[...extras,...demo].filter(p=>!(localData.preview.hidden||[]).includes(p.id)).map(p=>({...p,...(localData.preview.posts?.[p.id]||{})}));localData.reports=[];localData.likes=localData.preview.likes||[];localData.saved=localData.preview.saved||[];lastCloudFetch=Date.now();return;
   }
   try {
+    const {data:sessionData,error:sessionError}=await supabase.auth.getSession();if(sessionError)throw sessionError;
+    const sessionUser=sessionData.session?.user;if(sessionUser?.id!==currentUser?.id){currentUser=sessionUser;isAdminUser=false;localData.profile={};localData.saved=[];localData.likes=[];localData.posts=[];closeModal();if(currentUser)await checkAdmin()}
     if(!currentUser?.id)throw Error('尚未建立身份，请重试连接');
     const [postsRes, claimsRes, privateClaimsRes, commentsRes, likesRes, reportsRes, favoritesRes, profileRes, historyRes] = await Promise.all([
       fetchRows('post_feed'),
@@ -426,9 +428,9 @@ async function detail(id,refresh=true){
   state.attachments.comment=null;state.mediaModes.comment='upload';
   const comments=(p.comments||[]).map(c=>`<div class="comment" id="comment-${esc(c.id)}">${avatar(c.author)}<div class="comment-content"><strong>${esc(c.author)}</strong><small>${dateText(c.date)}</small>${c.text?`<p>${linkedText(c.text)}</p>`:''}${mediaHtml(c.media)}</div>${isAdmin()||c.authorId===currentUser?.id?`<button class="mod-comment-remove" type="button" title="删除该留言" aria-label="删除该留言" data-action="modDeleteComment" data-id="${esc(p.id)}" data-comment="${esc(c.id)}">${ic('trash')}</button>`:''}</div>`).join('');
   const author=p.authorId===currentUser?.id?`<span class="mini-badge">我发布的</span>`:'';const ownerTools=p.authorId===currentUser?.id?`<div class="claim-own-tools"><button class="outline-button" data-action="editOwnPost" data-id="${esc(id)}">${ic('edit','sm')} 编辑帖子</button><button class="outline-button" data-action="hideOwnPost" data-id="${esc(id)}">${ic('trash','sm')} 删除帖子</button></div>`:'';
-  
+
   const body=`<div class="detail-cover ${p.coverImage&&p.cardStyle!=='text'?'has-image':''}">${poster(p)}</div><div class="detail-meta">${avatar(p.author)}<b>${esc(p.author)}</b><span>·</span><span>${absoluteDate(p.createdAt)}</span>${author}</div>${ownerTools}<h3 class="detail-title">${esc(p.title)}</h3><div class="detail-badges"><span class="mini-badge">${esc(p.category)}</span><span class="mini-badge status-${s.cls}">${s.label}</span><span class="mini-badge">已接单 ${n}/${MAX_CLAIMS}</span></div><p class="detail-description">${linkedText(p.body)}</p><div class="detail-operations"><button class="plain-button ${liked?'is-active':''}" data-action="like" data-id="${esc(id)}">${ic('heart','sm')}${liked?'已喜欢':'喜欢'} · ${p.likes}</button><button class="plain-button ${saved?'is-active':''}" data-action="save" data-id="${esc(id)}">${ic('bookmark','sm')}${saved?'已收藏':'收藏'}</button><button class="plain-button" data-action="share" data-id="${esc(id)}">${ic('copy','sm')}复制帖子信息</button><button class="plain-button" data-action="report" data-id="${esc(id)}">${ic('flag','sm')}举报</button></div>${isAdmin()?`<div class="admin-tools"><div class="admin-tools-head">${ic('shield-check','sm')} 管理员专属操作</div><p>可调整帖子分区；删帖会将其移入回收站，也能单独移除违规接单。</p><div class="admin-tool-buttons"><button class="outline-button" data-action="modPostCategory" data-id="${esc(id)}">${ic('edit','sm')} 修改分区</button>${n?`<button class="outline-button" data-action="modResetClaim" data-id="${esc(id)}">${ic('refresh-ccw','sm')} 重置全部接单</button>`:''}<button class="outline-button admin-danger" data-action="modDeletePost" data-id="${esc(id)}">${ic('trash','sm')} 删除帖子</button><button class="outline-button" data-action="adminDashboard">${ic('shield','sm')} 管理后台</button></div></div>`:''}<div class="section-rule"></div><h4 class="detail-smalltitle">${ic('route','sm')} 愿望进度</h4>${timeline(p)}<div class="claims-heading"><div><strong>创作者认领</strong><small>已有 ${n}/${MAX_CLAIMS} 位创作者接单 · 支持多人同时制作</small></div>${!mine&&free?`<button class="primary-button" data-action="claim" data-id="${esc(id)}">${ic('hand-heart','sm')} 我来接单</button>`:''}</div>${n?claimsOf(p).map(c=>claimMarkup(p,c)).join(''):`<div class="creator-box"><strong>还没有创作者认领</strong><p>如果这个灵感刚好戳中你，可以留下制作计划和参考图片，成为第一位接单者。</p></div>`}${!free&&!mine?`<div class="fine-print">本条愿望的 ${MAX_CLAIMS} 个接单席位已经满了。如果有人撤回，席位会重新开放。</div>`:''}<div class="section-rule"></div><h4 class="detail-smalltitle">${ic('message','sm')} 留言交流 <span class="muted">${p.comments?.length||0}</span></h4><div class="comment-list">${comments||'<p class="muted" style="font-size:12px">还没有留言，来聊聊这个愿望吧。</p>'}</div><form class="comment-form comment-form-media" data-form="comment" data-id="${esc(id)}"><textarea name="comment" maxlength="500" aria-label="写一条留言" placeholder="说点什么…也可以只分享一张照片"></textarea>${attachmentComposer('comment',true)}<div class="comment-bottom"><small>发帖和聊天截图请注意遮盖隐私信息</small><button type="submit">${ic('send','sm')} 发布留言</button></div></form><div class="fine-print">${PREVIEW_MODE?'这是本地演示数据，互动和管理不会写入云端。':'资料与互动由当前登录身份保存；匿名会话请先绑定邮箱再换设备。'}</div>`;
-  
+
   if($('#modalRoot').classList.contains('is-open')) updateModal('愿望详情',body,{type:'detail',id});
   else openModal('愿望详情',body,{type:'detail',id});
   if(state.commentTarget){document.getElementById('comment-'+state.commentTarget)?.scrollIntoView({block:'center'});state.commentTarget=null}
@@ -524,7 +526,7 @@ async function compressedPhoto(file,maxEdge=1000){
 
 async function handleForm(form){
   const kind=form.dataset.form, fd=new FormData(form), id=form.dataset.id;
-  
+
   if(kind==='adminLogin'){
     const email=String(fd.get('email')||'').trim();
     const password=String(fd.get('password')||'');
@@ -557,14 +559,14 @@ async function handleForm(form){
   if(kind==='report'){
     const p=postBy(id);if(!p)return toast('帖子不存在');
     const reason=String(fd.get('reason')||'其他问题'), note=String(fd.get('note')||'').trim();
-    await supabase.from('reports').insert({ post_id: id, reason, note });
+    const {error}=await supabase.from('reports').insert({post_id:id,reason,note});if(error)return toast('举报提交失败：'+error.message);
     closeModal(); toast('举报已提交至云端');
     return;
   }
   if(kind==='post'){
     const title=String(fd.get('title')||'').trim(), body=String(fd.get('body')||'').trim(), author=String(fd.get('author')||'').trim()||'匿名旅人';
     if(title.length<2||!body)return toast('请写下标题和愿望详情');
-    if(!baseCategories.includes(state.selectCat))return toast('自定义分区目前仅用于本机预览；完成云端分类迁移后才能发布');
+    if(![...baseCategories,...localData.posts.map(p=>p.category)].includes(state.selectCat))return toast('自定义分区目前仅用于本机预览；完成云端分类迁移后才能发布');
     let coverUrl='';if(state.cardStyle==='image'){if(state.upload){coverUrl=await uploadToSupabaseStorage(state.upload)}else{coverUrl=cleanImageUrl(state.coverUrl);if(!coverUrl)return toast('请上传封面图片或填写有效的 HTTPS 图片 URL')}}
     const newPost = {
       title, body,
@@ -616,7 +618,7 @@ async function handleForm(form){
     const location=String(fd.get('location')||'').trim(), rawUrl=String(fd.get('url')||'').trim(), url=rawUrl?cleanUrl(rawUrl):'';
     if(rawUrl&&!url)return toast('领取链接需要有效的 HTTPS URL');
     if(status==='done'&&!location)return toast('完成时请填写文件位置');
-    
+
     let deliveryData = null;
     if(status==='done'){
       deliveryData = { location, url, note: String(fd.get('note')||'').trim(), date: new Date().toISOString() };
@@ -653,7 +655,7 @@ function showProfile(){setView('mine')}
 async function editOwnPost(id){
   const p=postBy(id);if(!p||p.authorId!==currentUser?.id)return toast('只能编辑自己发布的帖子');
   if(!PREVIEW_MODE){try{await loadDetail(p)}catch(e){return toast(e.message)}}
-  const body=`<p class="form-lead">只会修改这条愿望的文字和封面，原来的留言与接单进度会保留。</p><form data-form="ownPostEdit" data-id="${esc(id)}"><div class="form-field"><label class="form-label">帖子分区</label><select name="category">${categoryLabels().map(c=>`<option ${c===p.category?'selected':''} value="${esc(c)}">${esc(c)}</option>`).join('')}</select></div><div class="form-field"><label class="form-label">标题</label><input name="title" maxlength="65" required value="${esc(p.title)}"></div><div class="form-field"><label class="form-label">正文</label><textarea name="body" maxlength="1800" required>${esc(p.body)}</textarea></div><div class="form-field"><label class="form-label">封面类型</label><div class="select-grid">${[['image','封面图片'],['text','文字封面']].map(([v,label])=>`<label class="select-category"><input type="radio" name="cardStyle" value="${v}" ${( ((p.cardStyle==='image'||p.coverImage)?'image':'text')===v)?'checked':''}> ${label}</label>`).join('')}</div><label class="form-label" for="editCoverUrl">封面图片 HTTPS URL <small>已有上传图可以继续使用</small></label><input id="editCoverUrl" name="coverUrl" type="url" maxlength="2000" value="${esc(p.coverImage||'')}" placeholder="https://example.com/cover.jpg"></div><label class="privacy-choice"><input type="checkbox" name="spoiler" ${p.isSpoiler?'checked':''}><span><strong>标记为暴雷帖</strong><small>请确认公开标题不包含敏感细节。</small></span></label><div class="form-foot"><small>你的接单、留言和收藏不会受影响。</small><button class="primary-button" type="submit">保存修改</button></div></form>`;
+  const body=`<p class="form-lead">只会修改这条愿望的文字和封面，原来的留言与接单进度会保留。</p><form data-form="ownPostEdit" data-id="${esc(id)}"><div class="form-field"><label class="form-label">帖子分区</label><select name="category">${[...new Set([p.category,...categoryLabels()])].map(c=>`<option ${c===p.category?'selected':''} value="${esc(c)}">${esc(c)}</option>`).join('')}</select></div><div class="form-field"><label class="form-label">标题</label><input name="title" maxlength="65" required value="${esc(p.title)}"></div><div class="form-field"><label class="form-label">正文</label><textarea name="body" maxlength="1800" required>${esc(p.body)}</textarea></div><div class="form-field"><label class="form-label">封面类型</label><div class="select-grid">${[['image','封面图片'],['text','文字封面']].map(([v,label])=>`<label class="select-category"><input type="radio" name="cardStyle" value="${v}" ${( ((p.cardStyle==='image'||p.coverImage)?'image':'text')===v)?'checked':''}> ${label}</label>`).join('')}</div><label class="form-label" for="editCoverUrl">封面图片 HTTPS URL <small>已有上传图可以继续使用</small></label><input id="editCoverUrl" name="coverUrl" type="url" maxlength="2000" value="${esc(p.coverImage||'')}" placeholder="https://example.com/cover.jpg"></div><label class="privacy-choice"><input type="checkbox" name="spoiler" ${p.isSpoiler?'checked':''}><span><strong>标记为暴雷帖</strong><small>请确认公开标题不包含敏感细节。</small></span></label><div class="form-foot"><small>你的接单、留言和收藏不会受影响。</small><button class="primary-button" type="submit">保存修改</button></div></form>`;
   updateOrOpen('编辑我的帖子',body,{type:'ownPostEdit',id});
 }
 function modEditPostCategory(id){
@@ -730,7 +732,7 @@ async function adminDashboard(tab='posts'){
   if(tab==='posts') section=`<p class="mod-subheading">当前共有 ${localData.posts.length} 条公开愿望</p><input id="modSearch" class="mod-filter-input" type="search" placeholder="搜索帖子…"><div class="mod-items">${[...localData.posts.filter(p=>!p.isDeleted)].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(p=>modItem(p)).join('')||'<div class="mod-empty">暂无帖子</div>'}</div>`;
   if(tab==='categories') section=`<p class="mod-subheading">维护横向分类导航与发布分类。</p><button class="primary-button" data-action="adminCategories">${ic('edit','sm')} 管理发布分区</button><div class="mod-items">${categoryLabels().map(c=>`<div class="mod-item"><strong class="mod-item-title">${esc(c)}</strong></div>`).join('')}</div>`;
   if(tab==='reports') section=`<p class="mod-subheading">用户举报列表</p><div class="mod-items">${localData.reports.map(r=>`<div class="mod-item"><div class="mod-item-head"><strong class="mod-item-title">举报原因：${esc(r.reason)}</strong><span class="mini-badge">${r.resolved?'已处理':'待处理'}</span></div><p>${esc(r.note||'')}</p><div class="mod-actions">${!r.resolved?`<button class="success" data-action="modResolve" data-report="${esc(r.id)}">标记已处理</button>`:''}</div></div>`).join('')||'<div class="mod-empty">暂无举报</div>'}</div>`;
-  
+
   const body=`<div class="mod-stat-grid"><div class="mod-stat"><strong>${localData.posts.length}</strong><span>公开帖子</span></div><div class="mod-stat"><strong>${pending}</strong><span>待处理举报</span></div></div><div class="mod-hint">${ic('shield-check','sm')} <strong>云端管理员模式已开启。</strong></div><div class="mod-tabs">${[['posts','帖子管理'],['categories','分区管理'],['trash','回收站'],['logs','审计'],['reports',`举报 ${pending?`(${pending})`:''}`]].map(([t,label])=>`<button class="mod-tab ${tab===t?'active':''}" data-action="modTab" data-tab="${t}">${label}</button>`).join('')}</div>${section}<div class="mod-bottom"><button class="mod-logout" data-action="adminLogout">${ic('log-out','sm')} 退出管理员</button></div>`;
   if($('#modalRoot').classList.contains('is-open')) updateModal('管理后台 · mimu.',body,{type:'adminDashboard',tab});
   else openModal('管理后台 · mimu.',body,{type:'adminDashboard',tab});

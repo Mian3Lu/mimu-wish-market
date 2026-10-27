@@ -5,7 +5,8 @@ window.MimuCarousel = {
     const motion=matchMedia('(prefers-reduced-motion: reduce)');
     const body=document.querySelector('#heroSlides'), indicators=document.querySelector('#heroIndicators');
     body.innerHTML=slides.map((s,i)=>`<div class="hero-slide" ${i?'hidden':''} role="group" aria-roledescription="幻灯片" aria-label="${i+1} / 3"><p class="hero-eyebrow">${s.eyebrow}</p><h1>${esc(s.title).replace(/\n/g,'<br>')}</h1><p class="hero-description">${esc(s.description)}</p><button class="welcome-btn" data-action="${s.action}">${esc(s.button)} ${ic('arrow-right','sm')}</button><span class="hero-number" aria-hidden="true">${s.number}</span></div>`).join('');
-    const show=n=>{index=(n+slides.length)%slides.length;body.querySelectorAll('.hero-slide').forEach((s,i)=>{s.hidden=i!==index});indicators.innerHTML=slides.map((s,i)=>`<button type="button" aria-label="第 ${i+1} 张" aria-current="${i===index}" data-slide="${i}">${String(i+1).padStart(2,'0')}</button>`).join('')};
+    indicators.innerHTML=slides.map((s,i)=>`<button type="button" aria-label="第 ${i+1} 张" aria-current="false" data-slide="${i}">${String(i+1).padStart(2,'0')}</button>`).join('');
+    const show=n=>{index=(n+slides.length)%slides.length;body.querySelectorAll('.hero-slide').forEach((s,i)=>{s.hidden=i!==index});indicators.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-current',String(i===index)))};
     show(0);
     document.querySelector('#heroPrevious').onclick=()=>show(index-1);
     document.querySelector('#heroNext').onclick=()=>show(index+1);
