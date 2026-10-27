@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#faf9f7">
+<meta name="application-name" content="mimu. 愿望市集">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="mimu.">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" type="image/png" href="/assets/mimu-icon.png">
+<link rel="apple-touch-icon" href="/assets/mimu-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="description" content="mimu. 愿望市集，一个将主题美化、世界书、App 和小小灵感交给创作者的地方。">
 <title>mimu. ｜ 愿望市集 · 创作者接单版</title>
 <!-- 引入 Supabase JS 客户端库 -->
@@ -62,6 +69,28 @@ html[data-theme=dark]{color-scheme:dark;--bg:#13151a;--surface:#1e2026;--surface
   .modal-root.is-detail .modal-head{padding-top:calc(15px + env(safe-area-inset-top,0px))}
   .modal-root.is-detail .modal-scroll{min-height:0;-webkit-overflow-scrolling:touch}
   .modal-root.is-detail .detail-cover.has-image{aspect-ratio:auto}
+}
+
+/* Grid masonry avoids fragmented image cards in mobile WebKit columns. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.feed-masonry{display:grid;columns:auto;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:1px;column-gap:13px;row-gap:0;align-items:start;--card-gap:13px}
+.feed-masonry>.post-card{display:block;align-self:start;min-width:0;margin:0}
+.feed-masonry>.empty-board{grid-column:1/-1}
+.post-cover.is-image-cover img{position:absolute;inset:0;width:100%;height:100%}
+body.modal-page-locked{position:fixed;top:var(--locked-page-top,0px);left:0;right:0;width:100%;overflow:hidden}
+.modal-scroll{min-height:0;scroll-behavior:auto;overflow-anchor:none}
+@media(max-width:960px),(pointer:coarse){input,textarea,select{font-size:16px!important}}
+@media(max-width:660px){
+  .feed-masonry{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:9px;--card-gap:9px}
+  .feed-masonry>.post-card{animation:none}
+  .modal-root{top:var(--modal-viewport-top,0px);bottom:auto;height:var(--modal-viewport-height,100dvh)}
+  .modal-root .modal-panel{max-height:calc(var(--modal-viewport-height,100dvh) - env(safe-area-inset-bottom,0px))}
+  .modal-root.is-detail .modal-panel{height:100%;max-height:100%}
+}
+@media(hover:none){.post-card:hover{transform:none}}
+@media(display-mode:standalone){
+  .site-header{height:calc(var(--header-h) + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px)}
+  .category-strip{top:calc(var(--header-h) + env(safe-area-inset-top,0px))}
 }
 </style>
 </head>
@@ -360,6 +389,22 @@ function renderStats(){
   $('#statsBox').innerHTML=`<div><div class="stat-num">${n}</div><div class="stat-label">收集到的愿望</div></div><div><div class="stat-num">${done}</div><div class="stat-label">已经实现</div></div><div><div class="stat-num">${doing}</div><div class="stat-label">正在被制作</div></div><div><div class="stat-num">${localData.posts.filter(p=>p.status==='open').length}</div><div class="stat-label">等待灵感认领</div></div>`
 }
 
+// Measure natural card heights; each card stays in one grid cell instead of a CSS column fragment.
+let feedLayoutFrame=0;
+function layoutFeed(){
+  const feed=$('#feed'),gap=parseFloat(getComputedStyle(feed).getPropertyValue('--card-gap'))||0;
+  feed.querySelectorAll('.post-card').forEach(card=>{card.style.gridRowEnd=`span ${Math.ceil(card.offsetHeight+gap)}`});
+}
+function scheduleFeedLayout(){cancelAnimationFrame(feedLayoutFrame);feedLayoutFrame=requestAnimationFrame(layoutFeed)}
+const feedCardObserver=typeof ResizeObserver==='function'?new ResizeObserver(scheduleFeedLayout):null;
+function observeFeedCards(){
+  feedCardObserver?.disconnect();
+  $('#feed').querySelectorAll('.post-card').forEach(card=>feedCardObserver?.observe(card));
+  layoutFeed();
+}
+window.addEventListener('resize',scheduleFeedLayout,{passive:true});
+$('#feed').addEventListener('load',scheduleFeedLayout,true);
+
 async function render(refresh=true){
   if(PREVIEW_MODE)$('#previewBanner').hidden=false;
   if(refresh)await fetchCloudData();
@@ -375,6 +420,7 @@ async function render(refresh=true){
   $('#resultCount').textContent=`共 ${posts.length} 条愿望 · 按发布时间从新到旧`;
   $('#feed').innerHTML=posts.length?posts.map(renderCard).join(''):`<div class="empty-board" style="column-span:all"><div class="empty-icon">${ic(state.view==='saved'?'bookmark':state.view==='mine'?'user':'sparkles','lg')}</div><h3>${state.view==='saved'?'还没有收藏的愿望':state.view==='mine'?'这里还没有你的足迹':'暂时没有符合条件的愿望'}</h3><p>${state.view==='saved'?'点开喜欢的帖子，收藏后就能在这里找到。':state.view==='mine'?'发布你的第一个愿望，或认领一个正在等待实现的灵感。':'换个分类或筛选条件看看，也可以自己投递一个愿望。'}</p><button data-action="create">发布愿望</button></div>`;
   hydrateIcons();
+  observeFeedCards();
 }
 
 function setView(v){state.view=v;state.cat='全部';state.status='全部状态';state.filtersOpen=false;state.query='';$('#searchInput').value='';$('#clearSearch').style.display='none';render(false);window.scrollTo({top:0,behavior:'smooth'})}
@@ -405,10 +451,33 @@ function favorite(id){
   if(state.modal?.type==='detail') detail(id,false);
 }
 
-function openModal(title,body,meta){state.lastFocus=document.activeElement;state.modal=meta||{type:'misc'};$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalRoot').classList.toggle('is-detail',state.modal.type==='detail');$('#modalRoot').classList.add('is-open');document.body.style.overflow='hidden';$('.close-modal')?.focus({preventScroll:true});hydrateIcons($('#modalBody'))}
+let lockedPageY=null;
+function syncModalViewport(){
+  const root=$('#modalRoot');if(!root.classList.contains('is-open'))return;
+  const viewport=window.visualViewport;
+  root.style.setProperty('--modal-viewport-height',`${viewport?.height||window.innerHeight}px`);
+  root.style.setProperty('--modal-viewport-top',`${viewport?.offsetTop||0}px`);
+}
+window.visualViewport?.addEventListener('resize',syncModalViewport,{passive:true});
+window.visualViewport?.addEventListener('scroll',syncModalViewport,{passive:true});
+window.addEventListener('resize',syncModalViewport,{passive:true});
+function lockModalPage(){
+  if(lockedPageY!==null)return;
+  lockedPageY=window.scrollY;
+  document.body.style.setProperty('--locked-page-top',`${-lockedPageY}px`);
+  document.body.classList.add('modal-page-locked');
+}
+function unlockModalPage(){
+  if(lockedPageY===null)return;
+  const pageY=lockedPageY;lockedPageY=null;
+  document.body.classList.remove('modal-page-locked');
+  document.body.style.removeProperty('--locked-page-top');
+  window.scrollTo({top:pageY,behavior:'instant'});
+}
+function openModal(title,body,meta){state.lastFocus=document.activeElement;state.modal=meta||{type:'misc'};$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalRoot').classList.toggle('is-detail',state.modal.type==='detail');$('#modalRoot').classList.add('is-open');lockModalPage();syncModalViewport();$('.close-modal')?.focus({preventScroll:true});hydrateIcons($('#modalBody'))}
 function updateModal(title,body,meta){state.modal=meta||state.modal;$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modalRoot').classList.toggle('is-detail',state.modal.type==='detail');$('#modalBody').scrollTop=0;hydrateIcons($('#modalBody'))}
 function updateOrOpen(title,body,meta){if($('#modalRoot').classList.contains('is-open'))updateModal(title,body,meta);else openModal(title,body,meta)}
-function closeModal(){if(!$('#modalRoot').classList.contains('is-open'))return;$('#modalRoot').classList.remove('is-open','is-detail');$('#modalBody').innerHTML='';document.body.style.overflow='';state.upload=null;state.modal=null;state.lastFocus?.focus?.({preventScroll:true})}
+function closeModal(){if(!$('#modalRoot').classList.contains('is-open'))return;$('#modalRoot').classList.remove('is-open','is-detail');document.activeElement?.blur?.();$('#modalBody').innerHTML='';unlockModalPage();state.upload=null;state.modal=null;state.lastFocus?.focus?.({preventScroll:true})}
 
 const timeline=p=>{const steps=['open','claimed','working','done'];const index=steps.indexOf(p.status);return`<div class="timeline">${['等待接单','已接单','制作中','已完成'].map((title,i)=>`<div class="timeline-step ${i<=index?'passed':''}">${title}</div>`).join('')}</div>`};
 
