@@ -21,3 +21,17 @@ html[data-theme=dark] .text-poster.theme-mint{background:#1d2822}html[data-theme
 /* The portrait itself remains the file picker, including keyboard access. */
 .user-avatar-picker input{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border-radius:inherit}
 .user-avatar-picker:focus-within{outline:2px solid var(--ink);outline-offset:3px}
+/* Follow-up: real horizontal scrolling, with no numbered strip. */
+.hero-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scroll-behavior:smooth}
+.hero-track::-webkit-scrollbar{display:none}.hero-track>.hero-slide{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always;height:260px;padding-bottom:42px}
+.carousel-access{position:absolute;right:14px;bottom:10px;display:flex;gap:3px;z-index:3}.carousel-access button{display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:var(--surface);color:var(--ink-2)}
+.welcome.carousel{position:relative}.hero-number,.carousel-tools{display:none}.profile-topline{align-items:flex-start}.profile-topline>button{margin-top:62px;margin-bottom:12px}.profile-topline{margin-bottom:0}
+.covenant-toolbar{display:flex;justify-content:flex-end;margin-bottom:16px}.profile-image-actions .outline-button{min-height:38px}.profile-editor-avatar>div{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.profile-editor-avatar>div strong,.profile-editor-avatar>div p{width:100%}
+.profile-url-preview{max-height:220px;max-width:100%;object-fit:contain;border-radius:10px;margin:14px auto}.feed-masonry.is-empty{display:block;min-height:0}.feed-masonry.is-empty>.empty-board{margin-top:0}.bottom-nav-host{display:none}
+@media(max-width:660px){
+ .hero-track>.hero-slide{height:250px}.profile-topline>button{margin-top:56px;margin-bottom:14px}.profile-info h2{margin-top:0}
+ .bottom-nav-host{display:block;position:fixed;left:0;right:0;bottom:0;height:calc(64px + env(safe-area-inset-bottom,0px));z-index:90;isolation:isolate;transform:translateZ(0);-webkit-backface-visibility:hidden}
+ .bottom-nav-host .mobile-tabbar{position:absolute!important;height:100%!important;top:auto!important;bottom:0!important;contain:none}
+ body.modal-page-locked .bottom-nav-host{visibility:hidden}.page-layout{padding-bottom:28px}.empty-board{overflow:visible}.view-mine .page-layout{padding-top:14px}
+}
+@media(prefers-reduced-motion:reduce){.hero-track{scroll-behavior:auto}}

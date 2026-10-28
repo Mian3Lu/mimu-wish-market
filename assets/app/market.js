@@ -14,6 +14,7 @@ supabase.auth.onAuthStateChange(event=>{
 const ICONS={
 search:'<circle cx="11" cy="11" r="7.5"/><path d="m16.5 16.5 5 5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',moon:'<path d="M20.5 14.7A8.6 8.6 0 0 1 9.3 3.5a8.8 8.8 0 1 0 11.2 11.2Z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',plus:'<path d="M12 5v14M5 12h14"/>','arrow-right':'<path d="M5 12h14m-6-6 6 6-6 6"/>','arrow-left':'<path d="M19 12H5m6 6-6-6 6-6"/>','arrow-up':'<path d="M12 19V5m-6 6 6-6 6 6"/>','chevron-right':'<path d="m9 18 6-6-6-6"/>','chevron-down':'<path d="m6 9 6 6 6-6"/>',heart:'<path d="M20.8 4.7a5.3 5.3 0 0 0-7.5 0L12 6l-1.3-1.3a5.3 5.3 0 0 0-7.5 7.5L12 21l8.8-8.8a5.3 5.3 0 0 0 0-7.5Z"/>',home:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1Z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',bookmark:'<path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>',sliders:'<path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',sparkles:'<path d="m12 2 2.1 6 6 2.1-6 2.1L12 18l-2.1-5.8L4 10.1l5.9-2.1L12 2Zm7 13 1 2.5L22 18l-2 1-1 2.5-1-2.5-2-1 2-1 1-2.5Z"/>',route:'<circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M8 5h6a5 5 0 0 1 0 10H9a4 4 0 0 0 0 8"/>','pen-line':'<path d="m12 19 9-9-7-7-9 9-2 9 9-2Z"/><path d="m10 7 7 7"/>','hand-heart':'<path d="M3 15v4l6 2h7l5-7c1-2-1-3-2-2l-4 4h-5"/><path d="M3 14h4l3-3h6c2 0 2 3 0 3h-5"/><path d="M15 4c1-2 5-1 5 2 0 2-5 5-5 5s-5-3-5-5c0-3 4-4 5-2Z"/>',brush:'<path d="m14 4 6 6-8 8-6-6 8-8Z"/><path d="M5 15c-2 0-3 1-3 3 0 3-1 4-1 4s2-1 4-1c2 0 3-1 3-3"/>','check-circle':'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/>',message:'<path d="M4 4h16v13H9l-5 4V4Z"/>',send:'<path d="m21 3-8 18-3-8-8-3 19-7Z"/><path d="M10 13 21 3"/>',location:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',external:'<path d="M13 5h6v6m0-6-9 9"/><path d="M19 13v6H5V5h6"/>',copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',check:'<path d="m4 12 5 5L20 6"/>','circle-dot':'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',edit:'<path d="M12 20H4v-8l10-10 8 8-10 10Z"/><path d="m12 4 8 8"/>',trash:'<path d="M4 7h16m-3 0-1 14H8L7 7m2 0V4h6v3"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/>',filter:'<path d="M3 4h18l-7 8v7l-4 2v-9L3 4Z"/>'};
 Object.assign(ICONS,{
+ play:'<path d="m8 5 11 7-11 7V5Z"/>',pause:'<path d="M8 5v14M16 5v14"/>',
  shield:'<path d="M12 2 21 6v6c0 5-3.5 8-9 10C6.5 20 3 17 3 12V6l9-4Z"/><path d="M12 8v5m0 3h.01"/>',
  'shield-check':'<path d="M12 2 21 6v6c0 5-3.5 8-9 10C6.5 20 3 17 3 12V6l9-4Z"/><path d="m8 12 3 3 5-6"/>',
  trash:'<path d="M4 7h16M10 4h4m-8 3 1 14h10l1-14M10 11v6m4-6v6"/>',
@@ -42,6 +43,7 @@ const palettes=['mint','pink','cream','blue','plum','sage','peach','charcoal'];
 let currentUser=null;
 let isAdminUser=false;
 let lastCloudFetch=0;
+let covenantRevision=0,covenantSections=null;
 let cloudError='',cloudUpgradeReady=false,profileDraft=null,cropTask=null;
 let mineTab='posts',mineCategory='全部',mineStatus='全部状态',pageLimit=24;
 let spoilerSession=null;
@@ -299,7 +301,7 @@ function renderStats(){
 let feedLayoutFrame=0;
 function layoutFeed(){
   const feed=$('#feed'),gap=parseFloat(getComputedStyle(feed).getPropertyValue('--card-gap'))||0;
-  feed.querySelectorAll('.post-card').forEach(card=>{card.style.gridRowEnd=`span ${Math.ceil(card.offsetHeight+gap)}`});
+  feed.querySelectorAll('.post-card,.empty-board,.feed-message').forEach(card=>{card.style.gridRowEnd=`span ${Math.ceil(card.offsetHeight+gap)}`});
 }
 function scheduleFeedLayout(){cancelAnimationFrame(feedLayoutFrame);feedLayoutFrame=requestAnimationFrame(layoutFeed)}
 const feedCardObserver=typeof ResizeObserver==='function'?new ResizeObserver(scheduleFeedLayout):null;
@@ -326,6 +328,8 @@ async function render(refresh=true){
   const labels={feed:state.cat==='全部'?'最新愿望':state.cat,progress:'接单进度',saved:'我的收藏',mine:'我的足迹'};
   $('#feedTitle').innerHTML=`${esc(labels[state.view]||'最新愿望')} <span>${state.view==='feed'?'new arrivals':{progress:'work in progress',saved:'your favorites',mine:'my little corner'}[state.view]}</span>`;
   const profileMode=state.view==='mine';
+  document.body.classList.toggle('view-mine',profileMode);
+  $('.category-strip').classList.toggle('hide',profileMode);
   if(!profileMode)$('#profileFilters')?.remove();
   $('#profilePage').classList.toggle('hide',!profileMode);
   if(profileMode)renderProfilePage();
@@ -334,7 +338,7 @@ async function render(refresh=true){
   const posts=filtered();
   $('#feed').classList.toggle('activity-feed',profileMode&&mineTab!=='posts');
   $('#resultCount').textContent=`共 ${posts.length} 条愿望 · ${state.view==='saved'||(profileMode&&mineTab==='saved')?'按最近收藏排序':'按时间从新到旧'}`;
-  if(cloudError&&!PREVIEW_MODE){$('#feed').innerHTML=`<div class="feed-message"><strong>暂时无法加载市集</strong><p>${esc(cloudError)}</p><p>新版需先完成数据库迁移。已有云端数据不会被本机预览覆盖。</p><button class="outline-button" data-action="retryCloud">重新连接</button></div>`;return;}
+  if(cloudError&&!PREVIEW_MODE){$('#feed').classList.add('is-empty');$('#feed').innerHTML=`<div class="feed-message"><strong>暂时无法加载市集</strong><p>${esc(cloudError)}</p><p>新版需先完成数据库迁移。已有云端数据不会被本机预览覆盖。</p><button class="outline-button" data-action="retryCloud">重新连接</button></div>`;return;}
   if(profileMode&&mineTab==='comments')renderCommentHistory(posts);
   else if(profileMode&&mineTab==='claims')renderClaimHistory(posts);
   else if(profileMode&&(mineTab!=='posts'||posts.some(p=>p.isDeleted)))$('#feed').innerHTML=posts.length?posts.slice(0,pageLimit).map(p=>activityRow(p,mineTab)).join(''):emptyProfile();
@@ -342,6 +346,7 @@ async function render(refresh=true){
   $('#morePosts')?.remove();
   if(posts.length>pageLimit&&!(profileMode&&['comments','claims'].includes(mineTab)))$('#feed').insertAdjacentHTML('afterend','<button id="morePosts" class="load-more" data-action="loadMore">加载更多</button>');
 
+  $('#feed').classList.toggle('is-empty',!$('#feed').querySelector('.post-card'));
   hydrateIcons();
   observeFeedCards();
 }
@@ -453,7 +458,7 @@ function claimForm(id){
   if(ownedClaim(p))return toast('你已经接过这条愿望，可以在帖子内修改自己的进度');
   if(n>=MAX_CLAIMS)return toast('当前接单席位已满');
   state.attachments.claim=null;state.mediaModes.claim='upload';
-  const body=`<button class="go-back" data-action="backDetail" data-id="${esc(id)}">${ic('arrow-left','sm')} 返回帖子</button><p class="form-lead">你即将认领：<b>${esc(p.title)}</b><br>这是第 ${n+1}/${MAX_CLAIMS} 个接单席位。可以写制作计划并附上聊天截图或参考图片。</p><form data-form="claim" data-id="${esc(id)}"><div class="form-field"><label class="form-label" for="claimName">创作者昵称 *</label><input id="claimName" name="name" maxlength="24" required value="${esc(localData.pref.nickname)}" placeholder="怎么称呼你？"></div><div class="form-field"><label class="form-label" for="claimNote">接单留言 *</label><textarea name="note" maxlength="850" minlength="5" required placeholder="比如：这个美化我来做～我有一张参考图片，也会先试几个配色！"></textarea></div>${attachmentComposer('claim')}<label class="privacy-choice"><input type="checkbox" name="hidden" checked><span><strong>作品完成前，隐藏我的接单信息</strong><small>其他用户只看到有人接单，不显示昵称、留言或图片；完成后自动公开，撤回也不会留下接单信息。</small></span></label><div class="form-foot"><small>之后可随时自己修改制作状态。</small><button class="primary-button" type="submit">${ic('check','sm')} 确认接单</button></div></form>`;
+  const body=`<button class="go-back" data-action="backDetail" data-id="${esc(id)}">${ic('arrow-left','sm')} 返回帖子</button><p class="form-lead">你即将认领：<b>${esc(p.title)}</b><br>这是第 ${n+1}/${MAX_CLAIMS} 个接单席位。可以写制作计划并附上聊天截图或参考图片。</p><form data-form="claim" data-id="${esc(id)}"><div class="form-field"><label class="form-label" for="claimName">创作者昵称 *</label><input id="claimName" name="name" maxlength="24" required value="${esc(localData.pref.nickname)}" placeholder="怎么称呼你？"></div><div class="form-field"><label class="form-label" for="claimNote">接单留言 *</label><textarea name="note" maxlength="850" required placeholder="比如：这个美化我来做～我有一张参考图片，也会先试几个配色！"></textarea></div>${attachmentComposer('claim')}<label class="privacy-choice"><input type="checkbox" name="hidden" checked><span><strong>作品完成前，隐藏我的接单信息</strong><small>其他用户只看到有人接单，不显示昵称、留言或图片；完成后自动公开，撤回也不会留下接单信息。</small></span></label><div class="form-foot"><small>之后可随时自己修改制作状态。</small><button class="primary-button" type="submit">${ic('check','sm')} 确认接单</button></div></form>`;
   updateOrOpen('创作者接单',body,{type:'claim',id});
   setTimeout(()=>$('#claimName')?.focus(),40);
 }
@@ -485,9 +490,11 @@ function setMediaMode(kind,mode){
 }
 
 async function validatedUpload(dataUrl,kind){
-  const blob=await(await fetch(dataUrl)).blob();const form=new FormData();form.append('image',blob,'image.webp');form.append('kind',kind);
-  const {data,error}=await supabase.functions.invoke('validated-media',{body:form});
-  if(error||data?.error)throw Error(data?.error||'图片上传失败，请重试');return data;
+  const blob=await(await fetch(dataUrl)).blob();const form=new FormData();form.append('image',blob,blob.type==='image/jpeg'?'image.jpg':blob.type==='image/png'?'image.png':'image.webp');form.append('kind',kind);
+  const {data:sessionData,error:sessionError}=await supabase.auth.getSession();if(sessionError||!sessionData.session)throw Error('登录状态已失效，请重新连接');
+  const {data,error}=await supabase.functions.invoke('validated-media',{body:form,headers:{Authorization:'Bearer '+sessionData.session.access_token}});
+  if(error){let reason='图片上传失败，请重试';try{const details=await error.context?.json();reason=details?.error||reason}catch{}throw Error(reason)}
+  if(data?.error)throw Error(data.error);return data;
 }
 async function uploadToSupabaseStorage(dataUrl,folder='posts',bucket='wish-media'){
   const result=await validatedUpload(dataUrl,folder);return bucket==='claim-media'?result.path:result.publicUrl;
@@ -520,7 +527,7 @@ async function compressedPhoto(file,maxEdge=1000){
     canvas.width=Math.max(1,Math.round(img.width*scale));
     canvas.height=Math.max(1,Math.round(img.height*scale));
     canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
-    return canvas.toDataURL('image/webp',.73);
+    return encodeCanvasImage(canvas,.73);
   }finally{URL.revokeObjectURL(url)}
 }
 
@@ -565,7 +572,7 @@ async function handleForm(form){
   }
   if(kind==='post'){
     const title=String(fd.get('title')||'').trim(), body=String(fd.get('body')||'').trim(), author=String(fd.get('author')||'').trim()||'匿名旅人';
-    if(title.length<2||!body)return toast('请写下标题和愿望详情');
+    if(!title||!body)return toast('请写下标题和愿望详情');
     if(![...baseCategories,...localData.posts.map(p=>p.category)].includes(state.selectCat))return toast('自定义分区目前仅用于本机预览；完成云端分类迁移后才能发布');
     let coverUrl='';if(state.cardStyle==='image'){if(state.upload){coverUrl=await uploadToSupabaseStorage(state.upload)}else{coverUrl=cleanImageUrl(state.coverUrl);if(!coverUrl)return toast('请上传封面图片或填写有效的 HTTPS 图片 URL')}}
     const newPost = {
@@ -594,7 +601,7 @@ async function handleForm(form){
   if(kind==='claim'){
     const p=postBy(id);if(!p||claimsOf(p).length>=MAX_CLAIMS||ownedClaim(p))return toast('这条愿望已经无法继续接单');
     const name=String(fd.get('name')||'').trim(), note=String(fd.get('note')||'').trim();
-    if(!name||note.length<5)return toast('请留下昵称和至少 5 个字的接单说明');
+    if(!name||!note)return toast('请填写昵称和接单说明');
     let media;
     try{ media=await mediaFromForm('claim',fd) }catch(e){return toast(e.message)}
     const { error } = await supabase.from('claims').insert({
@@ -650,6 +657,7 @@ async function handleForm(form){
   }
 }
 
+function encodeCanvasImage(canvas,quality=.82){const candidate=canvas.toDataURL('image/webp',quality);return candidate.startsWith('data:image/webp;')?candidate:canvas.toDataURL('image/jpeg',quality)}
 function showProfile(){setView('mine')}
 
 async function editOwnPost(id){
@@ -679,16 +687,7 @@ function adminCategoryManager(){
 function exportInfo(id){const p=postBy(id);if(!p)return;const text=`mimu. 愿望市集 · ${p.title}\n分区：${p.category}${p.isSpoiler?' · 暴雷帖（需确认查看）':''}\n${location.origin}${location.pathname}?post=${encodeURIComponent(id)}`;if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>toast('公开帖子信息已复制'),()=>fallbackCopy(text));else fallbackCopy(text)}
 function fallbackCopy(str){const e=document.createElement('textarea');e.value=str;e.style.cssText='position:fixed;top:-100px;opacity:0';document.body.append(e);e.select();try{document.execCommand('copy');toast('帖子信息已复制')}catch{toast('复制失败')}e.remove()}
 
-function renderAdminState(){
-  const logged=isAdmin();
-  if(PREVIEW_MODE){$('#adminEntry').setAttribute('title','本地预览管理');$('#adminEntry').setAttribute('aria-label','本地预览管理');}
-  $('#adminEntry').classList.toggle('is-admin',logged);
-  $('#adminEntry').setAttribute('title',PREVIEW_MODE?'本地预览管理':(logged?'管理后台 · 已登录':'管理员登录'));
-  $('#adminEntry').setAttribute('aria-label',PREVIEW_MODE?'本地预览管理':(logged?'管理后台 · 已登录':'管理员登录'));
-  $('#adminEntry').innerHTML=ic(logged?'shield-check':'shield');
-  $('#adminNotice').classList.toggle('show',logged);
-  hydrateIcons($('#adminNotice'));
-}
+function renderAdminState(){document.body.classList.toggle('is-market-admin',isAdmin());}
 
 function loginAdmin(){
   if(isAdmin())return adminDashboard();
@@ -817,7 +816,10 @@ function dispatchAction(btn,event){
   if(a==='modRestore'){const {kind,key}=btn.dataset;return moderateRestore(kind,key)}
   if(a==='profileTab'){mineTab=btn.dataset.tab;pageLimit=24;return render(false)}
   if(a==='profileEdit')return editProfile();
-  if(a==='profileReset'){rememberProfileDraft();profileDraft[btn.dataset.kind+'_path']='';profileDraft[btn.dataset.kind+'Url']='';profileDraft[btn.dataset.kind+'Data']='';return renderProfileEditor()}
+  if(a==='profileImageUrl')return profileImageUrl(btn.dataset.kind);
+  if(a==='applyProfileUrl')return applyProfileUrl(btn.dataset.kind);
+  if(a==='editCovenant')return editCovenant();
+  if(a==='profileReset'){rememberProfileDraft();profileDraft[btn.dataset.kind+'_url']='';profileDraft[btn.dataset.kind+'_path']='';profileDraft[btn.dataset.kind+'Url']='';profileDraft[btn.dataset.kind+'Data']='';return renderProfileEditor()}
   if(a==='profileCrop')return applyCrop();
   if(a==='cancelCrop'){cropTask=null;return renderProfileEditor()}
   if(a==='spoilerConfirm'){spoilerSession=id;return detail(id,true)}
@@ -870,10 +872,11 @@ document.addEventListener('keydown',e=>{if(e.key==='Tab'&&$('#modalRoot').classL
 
 document.addEventListener('submit',async e=>{
   if(!e.target.dataset.form)return;e.preventDefault();
+  if(e.target.dataset.form==='covenantEdit')return saveCovenant(e.target);
   if(e.target.dataset.form==='profileEdit')return saveProfile(e.target);
   if(e.target.dataset.form==='account')return submitAccount(e.target);
   if(PREVIEW_MODE&&['post','claim','claimStatus','comment','ownPostEdit'].includes(e.target.dataset.form))return previewSubmit(e.target);
-  if(e.target.dataset.form==='ownPostEdit'){const id=e.target.dataset.id,p=postBy(id),fd=new FormData(e.target);if(!p||p.authorId!==currentUser?.id)return toast('只能编辑自己发布的帖子');const title=String(fd.get('title')||'').trim(),body=String(fd.get('body')||'').trim(),category=String(fd.get('category')||'');if(title.length<2||!body||!categoryLabels().includes(category))return toast('请检查标题、正文和分区');const cardStyle=fd.get('cardStyle')==='image'?'image':'text',coverValue=String(fd.get('coverUrl')||'').trim();if(cardStyle==='image'&&coverValue&&!cleanImageUrl(coverValue))return toast('封面链接必须是有效的 HTTPS URL');const art=cardStyle==='text'?'text':(COVER_ART.includes(p.art)?p.art:'other'),cover_image=cardStyle==='text'?'':(cleanImageUrl(coverValue)||p.coverImage||'');let {error}=await supabase.from('posts').update({title,body,category,card_style:cardStyle,art,cover_image,is_spoiler:fd.get('spoiler')==='on'}).eq('id',id);if(error&&/card_style/i.test(error.message||'')&&/schema cache|column/i.test(error.message||'')){({error}=await supabase.from('posts').update({title,body,category,art,cover_image,is_spoiler:fd.get('spoiler')==='on'}).eq('id',id))}if(error)return toast('修改失败：'+error.message);closeModal();await render();toast('愿望已更新');return}
+  if(e.target.dataset.form==='ownPostEdit'){const id=e.target.dataset.id,p=postBy(id),fd=new FormData(e.target);if(!p||p.authorId!==currentUser?.id)return toast('只能编辑自己发布的帖子');const title=String(fd.get('title')||'').trim(),body=String(fd.get('body')||'').trim(),category=String(fd.get('category')||'');if(!title||!body||!categoryLabels().includes(category))return toast('请检查标题、正文和分区');const cardStyle=fd.get('cardStyle')==='image'?'image':'text',coverValue=String(fd.get('coverUrl')||'').trim();if(cardStyle==='image'&&coverValue&&!cleanImageUrl(coverValue))return toast('封面链接必须是有效的 HTTPS URL');const art=cardStyle==='text'?'text':(COVER_ART.includes(p.art)?p.art:'other'),cover_image=cardStyle==='text'?'':(cleanImageUrl(coverValue)||p.coverImage||'');let {error}=await supabase.from('posts').update({title,body,category,card_style:cardStyle,art,cover_image,is_spoiler:fd.get('spoiler')==='on'}).eq('id',id);if(error&&/card_style/i.test(error.message||'')&&/schema cache|column/i.test(error.message||'')){({error}=await supabase.from('posts').update({title,body,category,art,cover_image,is_spoiler:fd.get('spoiler')==='on'}).eq('id',id))}if(error)return toast('修改失败：'+error.message);closeModal();await render();toast('愿望已更新');return}
   if(e.target.dataset.form==='modPostCategory'){
     if(!isAdmin())return toast('需要管理员身份');
     const id=e.target.dataset.id,p=postBy(id),category=String(new FormData(e.target).get('category')||'');
@@ -966,15 +969,15 @@ async function loadDetail(p){
   p.comments=(comments.data||[]).map(c=>({id:c.id,author:c.author,authorId:c.is_mine?currentUser.id:null,text:c.text,media:c.media,date:c.created_at}));
 }
 async function hydrateProfileMedia(){
-  for(const kind of ['avatar','cover']){const path=localData.profile[kind+'_path'];localData.profile[kind+'Url']='';if(!path)continue;const {data,error}=await supabase.storage.from('profile-media').createSignedUrl(path,3600);if(error)throw error;localData.profile[kind+'Url']=data.signedUrl;}
+  for(const kind of ['avatar','cover']){const path=localData.profile[kind+'_path'];localData.profile[kind+'Url']=cleanImageUrl(localData.profile[kind+'_url']||'');if(!path)continue;const {data,error}=await supabase.storage.from('profile-media').createSignedUrl(path,3600);if(error)throw error;localData.profile[kind+'Url']=data.signedUrl;}
 }
-function privatePortrait(profile=localData.profile){const src=imgSrc(profile.avatarData||profile.avatarUrl||'');return `<span class="profile-avatar">${src?`<img src="${esc(src)}" alt="我的头像">`:esc((profile.display_name||'匿').slice(0,1))}</span>`}
+function privatePortrait(profile=localData.profile){const src=imgSrc(profile.avatarData||profile.avatarUrl||profile.avatar_url||'');return `<span class="profile-avatar">${src?`<img src="${esc(src)}" alt="我的头像">`:esc((profile.display_name||'匿').slice(0,1))}</span>`}
 function renderProfilePage(){
   const p=localData.profile,own=localData.posts.filter(x=>x.authorId===currentUser?.id&&!x.isDeleted).length,taken=PREVIEW_MODE?localData.posts.reduce((n,x)=>n+claimsOf(x).filter(c=>c.id===currentUser?.id).length,0):localData.ownClaimHistory.length;
-  const cover=imgSrc(p.coverData||p.coverUrl||'');
+  const cover=imgSrc(p.coverData||p.coverUrl||p.cover_url||'');
   $('#profilePage').innerHTML=`<div class="profile-cover">${cover?`<img src="${esc(cover)}" alt="我的主页背景">`:''}</div><div class="profile-info"><div class="profile-topline"><label class="user-avatar-picker" aria-label="点击圆形头像更换头像">${privatePortrait()}<input type="file" id="profileAvatar" aria-label="选择个人头像" accept="image/jpeg,image/png,image/webp"></label><button class="outline-button" data-action="profileEdit">编辑个人资料</button></div><h2>${esc(p.display_name||'匿名旅人')}</h2><p class="profile-id">${PREVIEW_MODE?'LOCAL / 本地演示身份':`私人身份 · ${esc(currentUser?.id||'未连接')}`}</p>${p.bio?`<p class="profile-bio">${esc(p.bio)}</p>`:''}<div class="profile-stats"><span><b>${own}</b> 发布</span><span><b>${taken}</b> 接单</span><span><b>${localData.saved.length}</b> 收藏</span></div><p class="profile-notice">${PREVIEW_MODE?'这是隔离的本机演示空间，资料与操作只保存在这个浏览器。':currentUser?.is_anonymous?'匿名身份仅保存在当前浏览器，清除数据或换设备将无法恢复。请先绑定邮箱。':'你的资料与足迹仅自己可见；匿名发布不会公开关联到这张主页。'}</p><div class="profile-tools"><button class="outline-button" data-action="account">身份与登录</button><button class="outline-button" data-action="${isAdmin()?'adminDashboard':'adminEntry'}">${ic('shield','sm')} ${isAdmin()?'管理后台':'管理员入口'}</button></div></div><p class="profile-group-label">MY CONTENT / 我的内容</p><div class="profile-tabs" role="tablist" aria-label="我的内容">${[['posts','我发布的'],['claims','我接单的']].map(([k,t])=>profileTab(k,t)).join('')}</div><p class="profile-group-label">MY ACTIVITY / 我的足迹 · 仅自己可见</p><div class="profile-tabs" role="tablist" aria-label="我的足迹">${[['saved','我的收藏'],['likes','我的点赞'],['comments','我的评论']].map(([k,t])=>profileTab(k,t)).join('')}</div>`;
   $('#profileFilters')?.remove();
-  if(['posts','claims'].includes(mineTab))$('#profilePage').insertAdjacentHTML('afterend',`<div class="profile-filter" id="profileFilters"><select id="mineCategory" aria-label="按分类筛选">${['全部',...categoryLabels()].map(c=>`<option ${mineCategory===c?'selected':''}>${esc(c)}</option>`).join('')}</select><select id="mineStatus" aria-label="按接单状态筛选">${FILTERS.map(c=>`<option ${mineStatus===c?'selected':''}>${esc(c)}</option>`).join('')}</select><span class="muted" style="font-size:11px">按时间从新到旧</span></div>`);
+  if(['posts','claims'].includes(mineTab))$('#profilePage').insertAdjacentHTML('afterend',`<div class="profile-filter" id="profileFilters"><select id="mineStatus" aria-label="按接单状态筛选">${FILTERS.map(c=>`<option ${mineStatus===c?'selected':''}>${esc(c)}</option>`).join('')}</select><span class="muted" style="font-size:11px">按时间从新到旧</span></div>`);
 }
 function renderClaimHistory(posts){
  if(PREVIEW_MODE){$('#feed').innerHTML=posts.length?posts.slice(0,pageLimit).map(p=>activityRow(p,'claims')).join(''):emptyProfile();return;}
@@ -997,8 +1000,8 @@ function renderCommentHistory(posts){
 }
 function editProfile(){profileDraft={...localData.profile};renderProfileEditor();}
 function renderProfileEditor(){
-  const p=profileDraft,cover=imgSrc(p.coverData||p.coverUrl||'');
-  updateOrOpen('编辑个人资料',`<form data-form="profileEdit"><div class="profile-editor-cover">${cover?`<img src="${esc(cover)}" alt="背景图预览">`:''}</div><div class="profile-image-actions"><label class="outline-button">选择背景图<input type="file" id="profileCover" accept="image/jpeg,image/png,image/webp" class="sr-only"></label><button type="button" class="plain-button" data-action="profileReset" data-kind="cover">恢复默认背景</button></div><div class="profile-editor-avatar"><label class="user-avatar-picker" aria-label="点击圆形头像更换头像">${privatePortrait(p)}<input type="file" id="profileAvatar" aria-label="选择个人头像" accept="image/jpeg,image/png,image/webp"></label><div><strong>点击圆形头像更换</strong><p class="muted" style="font-size:11px">JPEG / PNG / WebP · 最大 12 MB</p><button type="button" class="plain-button" data-action="profileReset" data-kind="avatar">恢复默认头像</button></div></div><div class="form-field"><label class="form-label" for="profileDisplayName">昵称</label><input id="profileDisplayName" name="display_name" maxlength="24" required value="${esc(p.display_name||'匿名旅人')}"></div><div class="form-field"><label class="form-label" for="profileBio">个人简介（可选）</label><textarea id="profileBio" name="bio" maxlength="180" placeholder="留一句关于自己的话…">${esc(p.bio||'')}</textarea></div><p class="fine-print">资料只在你的私人主页中展示，不会替换历史匿名帖的署名。图片仅在保存时上传。</p><div class="form-foot"><small>${PREVIEW_MODE?'本机演示，不上传云端':'关联当前登录身份，仅本人可修改'}</small><button type="submit" class="primary-button">保存资料</button></div></form>`,{type:'profileEdit'});
+  const p=profileDraft,cover=imgSrc(p.coverData||p.coverUrl||p.cover_url||'');
+  updateOrOpen('编辑个人资料',`<form data-form="profileEdit"><div class="profile-editor-cover">${cover?`<img src="${esc(cover)}" alt="背景图预览">`:''}</div><div class="profile-image-actions"><label class="outline-button">从相册选择背景图<input type="file" id="profileCover" accept="image/jpeg,image/png,image/webp" class="sr-only"></label><button type="button" class="outline-button" data-action="profileImageUrl" data-kind="cover">图片 URL</button><button type="button" class="plain-button" data-action="profileReset" data-kind="cover">恢复默认背景</button></div><div class="profile-editor-avatar"><label class="user-avatar-picker" aria-label="点击圆形头像更换头像">${privatePortrait(p)}<input type="file" id="profileAvatar" aria-label="选择个人头像" accept="image/jpeg,image/png,image/webp"></label><div><strong>点击圆形头像更换</strong><p class="muted" style="font-size:11px">JPEG / PNG / WebP · 最大 12 MB</p><button type="button" class="outline-button" data-action="profileImageUrl" data-kind="avatar">图片 URL</button><button type="button" class="plain-button" data-action="profileReset" data-kind="avatar">恢复默认头像</button></div></div><div class="form-field"><label class="form-label" for="profileDisplayName">昵称</label><input id="profileDisplayName" name="display_name" maxlength="24" required value="${esc(p.display_name||'匿名旅人')}"></div><div class="form-field"><label class="form-label" for="profileBio">个人简介（可选）</label><textarea id="profileBio" name="bio" maxlength="180" placeholder="留一句关于自己的话…">${esc(p.bio||'')}</textarea></div><p class="fine-print">资料只在你的私人主页中展示，不会替换历史匿名帖的署名。图片仅在保存时上传。</p><div class="form-foot"><small>${PREVIEW_MODE?'本机演示，不上传云端':'关联当前登录身份，仅本人可修改'}</small><button type="submit" class="primary-button">保存资料</button></div></form>`,{type:'profileEdit'});
 }
 function rememberProfileDraft(){if($('#profileDisplayName'))profileDraft.display_name=$('#profileDisplayName').value;if($('#profileBio'))profileDraft.bio=$('#profileBio').value;}
 async function beginProfileCrop(file,kind){
@@ -1006,17 +1009,17 @@ async function beginProfileCrop(file,kind){
     updateOrOpen(kind==='avatar'?'裁剪头像':'裁剪背景图',`<img id="cropPreview" class="crop-preview" src="${esc(src)}" alt="裁剪预览" style="aspect-ratio:${kind==='avatar'?'1':'3'};height:auto;max-height:280px"><div class="crop-controls"><label>缩放<input id="cropZoom" type="range" min="1" max="3" step=".05" value="1"></label><label>左右<input id="cropX" type="range" min="0" max="100" value="50"></label><label>上下<input id="cropY" type="range" min="0" max="100" value="50"></label></div><div class="form-foot"><button class="outline-button" data-action="cancelCrop">取消</button><button class="primary-button" data-action="profileCrop">使用此裁剪</button></div>`,{type:'crop'});updateCropPreview();
   }catch(e){toast(e.message||'无法读取图片')}
 }
-function cropCanvas(){const {img,kind}=cropTask,canvas=document.createElement('canvas');canvas.width=kind==='avatar'?400:1500;canvas.height=kind==='avatar'?400:500;const zoom=Number($('#cropZoom')?.value||1),x=Number($('#cropX')?.value||50)/100,y=Number($('#cropY')?.value||50)/100,scale=Math.max(canvas.width/img.width,canvas.height/img.height)*zoom,w=canvas.width/scale,h=canvas.height/scale;canvas.getContext('2d').drawImage(img,(img.width-w)*x,(img.height-h)*y,w,h,0,0,canvas.width,canvas.height);return canvas.toDataURL('image/webp',.82)}
+function cropCanvas(){const {img,kind}=cropTask,canvas=document.createElement('canvas');canvas.width=kind==='avatar'?400:1500;canvas.height=kind==='avatar'?400:500;const zoom=Number($('#cropZoom')?.value||1),x=Number($('#cropX')?.value||50)/100,y=Number($('#cropY')?.value||50)/100,scale=Math.max(canvas.width/img.width,canvas.height/img.height)*zoom,w=canvas.width/scale,h=canvas.height/scale;canvas.getContext('2d').drawImage(img,(img.width-w)*x,(img.height-h)*y,w,h,0,0,canvas.width,canvas.height);return encodeCanvasImage(canvas,.82)}
 function updateCropPreview(){if(cropTask&&$('#cropPreview'))$('#cropPreview').src=cropCanvas()}
-function applyCrop(){if(!cropTask)return;profileDraft[cropTask.kind+'Data']=cropCanvas();cropTask=null;renderProfileEditor()}
+function applyCrop(){if(!cropTask)return;profileDraft[cropTask.kind+'Data']=cropCanvas();profileDraft[cropTask.kind+'_url']='';cropTask=null;renderProfileEditor()}
 async function saveProfile(form){
   const fd=new FormData(form);profileDraft.display_name=String(fd.get('display_name')||'').trim();profileDraft.bio=String(fd.get('bio')||'').trim();if(!profileDraft.display_name)return toast('请填写昵称');
   const button=form.querySelector('[type=submit]');button.disabled=true;
   try{if(PREVIEW_MODE){localData.profile={...profileDraft};localData.pref.nickname=profileDraft.display_name;saveLocalPreview()}else{
     if(!cloudUpgradeReady)throw Error('云端资料迁移尚未就绪');
-    for(const kind of ['avatar','cover'])if(profileDraft[kind+'Data']){const result=await validatedUpload(profileDraft[kind+'Data'],kind);profileDraft[kind+'_path']=result.path;}
-    const {error}=await (localData.profile.user_id?supabase.from('profiles').update({display_name:profileDraft.display_name,bio:profileDraft.bio,avatar_path:profileDraft.avatar_path||'',cover_path:profileDraft.cover_path||''}).eq('user_id',currentUser.id):supabase.from('profiles').insert({user_id:currentUser.id,display_name:profileDraft.display_name,bio:profileDraft.bio,avatar_path:profileDraft.avatar_path||'',cover_path:profileDraft.cover_path||''}));if(error)throw error;
-    localData.profile={user_id:currentUser.id,display_name:profileDraft.display_name,bio:profileDraft.bio,avatar_path:profileDraft.avatar_path||'',cover_path:profileDraft.cover_path||''};await hydrateProfileMedia();localData.pref.nickname=localData.profile.display_name;
+    for(const kind of ['avatar','cover'])if(profileDraft[kind+'Data']){const result=await validatedUpload(profileDraft[kind+'Data'],kind);profileDraft[kind+'_path']=result.path;profileDraft[kind+'_url']='';profileDraft[kind+'Data']='';}
+    const {error}=await (localData.profile.user_id?supabase.from('profiles').update({display_name:profileDraft.display_name,bio:profileDraft.bio,avatar_path:profileDraft.avatar_path||'',cover_path:profileDraft.cover_path||'',avatar_url:profileDraft.avatar_url||'',cover_url:profileDraft.cover_url||''}).eq('user_id',currentUser.id):supabase.from('profiles').insert({user_id:currentUser.id,display_name:profileDraft.display_name,bio:profileDraft.bio,avatar_path:profileDraft.avatar_path||'',cover_path:profileDraft.cover_path||'',avatar_url:profileDraft.avatar_url||'',cover_url:profileDraft.cover_url||''}));if(error)throw error;
+    localData.profile={user_id:currentUser.id,display_name:profileDraft.display_name,bio:profileDraft.bio,avatar_path:profileDraft.avatar_path||'',cover_path:profileDraft.cover_path||'',avatar_url:profileDraft.avatar_url||'',cover_url:profileDraft.cover_url||''};await hydrateProfileMedia();localData.pref.nickname=localData.profile.display_name;
   }closeModal();await render(false);toast('个人资料已保存');}catch(e){toast('保存失败：'+e.message)}finally{button.disabled=false}
 }
 function accountDialog(){
@@ -1038,7 +1041,7 @@ async function logoutAccount(){if(!confirm('退出后需要邮箱密码重新登
 async function previewSubmit(form){
   const fd=new FormData(form),kind=form.dataset.form,id=form.dataset.id;let p=postBy(id);const now=new Date().toISOString();
   if(kind==='post'){
-    const title=String(fd.get('title')||'').trim(),body=String(fd.get('body')||'').trim();if(title.length<2||!body)return toast('请填写标题和正文');const post={id:'demo-'+crypto.randomUUID(),category:state.selectCat,title,body,author:String(fd.get('author')||'').trim()||'匿名旅人',authorId:currentUser.id,createdAt:now,claims:[],comments:[],likes:0,status:'open',isSpoiler:fd.get('spoiler')==='on',cardStyle:state.cardStyle,palette:state.palette,coverImage:state.cardStyle==='image'?(state.upload||state.coverUrl):'',ratio:.85};localData.preview.demoPosts=[post,...(localData.preview.demoPosts||[])];
+    const title=String(fd.get('title')||'').trim(),body=String(fd.get('body')||'').trim();if(!title||!body)return toast('请填写标题和正文');const post={id:'demo-'+crypto.randomUUID(),category:state.selectCat,title,body,author:String(fd.get('author')||'').trim()||'匿名旅人',authorId:currentUser.id,createdAt:now,claims:[],comments:[],likes:0,status:'open',isSpoiler:fd.get('spoiler')==='on',cardStyle:state.cardStyle,palette:state.palette,coverImage:state.cardStyle==='image'?(state.upload||state.coverUrl):'',ratio:.85};localData.preview.demoPosts=[post,...(localData.preview.demoPosts||[])];
   }else if(p&&kind==='ownPostEdit'){if(p.authorId!==currentUser.id)return;Object.assign(p,{title:String(fd.get('title')||'').trim(),body:String(fd.get('body')||'').trim(),category:String(fd.get('category')||p.category),cardStyle:fd.get('cardStyle'),isSpoiler:fd.get('spoiler')==='on',coverImage:cleanImageUrl(fd.get('coverUrl'))});
   }else if(p&&kind==='claim'){if(ownedClaim(p)||claimsOf(p).length>=3)return toast('无法继续接单');p.claims.push({uid:crypto.randomUUID(),id:currentUser.id,name:String(fd.get('name')||''),note:String(fd.get('note')||''),date:now,status:'claimed',hiddenBeforeDone:fd.get('hidden')==='on',media:state.attachments.claim?{src:state.attachments.claim}:null});p.status='claimed';
   }else if(p&&kind==='claimStatus'){const c=ownedClaim(p);if(!c)return;c.status=fd.get('status');if(c.status==='done'&&!String(fd.get('location')||'').trim())return toast('请填写资源位置');const raw=String(fd.get('url')||'');if(raw&&!cleanUrl(raw))return toast('请输入有效 HTTPS URL');c.delivery=c.status==='done'?{location:fd.get('location'),url:cleanUrl(raw),note:fd.get('note')}:null;p.status=p.claims.some(c=>c.status==='done')?'done':p.claims.some(c=>c.status==='working')?'working':'claimed';
@@ -1046,7 +1049,35 @@ async function previewSubmit(form){
   if(p)localData.preview.posts[p.id]={...p};saveLocalPreview();closeModal();await render();toast('已保存到本机演示');
 }
 
-const openReading=window.MimuCarousel.init({esc,ic,openModal});
+async function readMarketContent(kind){
+ if(kind!=='covenant')return window.MimuContent[kind];
+ if(PREVIEW_MODE)return window.MimuContent.covenant;
+ const {data,error}=await supabase.from('market_documents').select('sections,revision').eq('key','covenant').maybeSingle();
+ if(!error&&data){covenantSections=data.sections;covenantRevision=data.revision;}
+ return covenantSections||window.MimuContent.covenant;
+}
+async function editCovenant(){
+ if(!isAdmin())return toast('只有管理员可以编辑市集公约');
+ const rows=await readMarketContent('covenant');
+ updateOrOpen('编辑市集公约',`<p class="form-lead">保存后会同步到所有访客，原版本会保留在服务端记录中。</p><form data-form="covenantEdit">${rows.map(([h,p],i)=>`<section class="form-field"><label class="form-label" for="covenantTitle${i}">第 ${i+1} 条标题</label><input id="covenantTitle${i}" name="heading${i}" maxlength="64" required value="${esc(h)}"><label class="form-label" for="covenantBody${i}">内容</label><textarea id="covenantBody${i}" name="content${i}" maxlength="1500" required>${esc(p)}</textarea></section>`).join('')}<div class="form-foot"><small>仅管理员可保存，每次修改都会记录版本</small><button class="primary-button" type="submit">保存市集公约</button></div></form>`,{type:'covenantEdit',rows:rows.length,revision:covenantRevision});
+}
+async function saveCovenant(form){
+ if(!isAdmin())return toast('需要管理员身份');const fd=new FormData(form),rows=Array.from({length:state.modal.rows},(_,i)=>[String(fd.get('heading'+i)||'').trim(),String(fd.get('content'+i)||'').trim()]);
+ if(rows.some(([h,p])=>!h||!p))return toast('标题与内容不能为空');const button=form.querySelector('[type="submit"]');button.disabled=true;
+ try{const {data,error}=await supabase.rpc('save_market_covenant',{new_sections:rows,expected_revision:state.modal.revision});if(error)throw error;covenantSections=rows;covenantRevision=data;await openReading('covenant');toast('市集公约已更新')}catch(e){toast('保存失败：'+e.message)}finally{button.disabled=false}
+}
+function profileImageUrl(kind){
+ if(!['avatar','cover'].includes(kind))return;if(state.modal?.type!=='profileEdit')profileDraft={...localData.profile};rememberProfileDraft();
+ updateOrOpen(kind==='avatar'?'使用头像 URL':'使用背景图 URL',`<p class="form-lead">填写可公开访问的 HTTPS 图片链接。图片直接引用外部图床，链接须长期有效。</p><div class="form-field"><label class="form-label" for="profileImageUrl">图片 URL</label><input id="profileImageUrl" type="url" maxlength="2000" placeholder="https://example.com/image.jpg" value="${esc(profileDraft[kind+'_url']||'')}"></div><div class="form-foot"><button class="outline-button" data-action="cancelCrop">返回资料编辑</button><button class="primary-button" data-action="applyProfileUrl" data-kind="${kind}">预览并使用</button></div>`,{type:'profileUrl'});
+}
+async function applyProfileUrl(kind){
+ const url=cleanImageUrl($('#profileImageUrl')?.value||'');if(!url)return toast('请输入有效的 HTTPS 图片链接');
+ try{const img=new Image();await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('图片加载超时，请检查链接')),12000);img.onload=()=>{clearTimeout(timeout);resolve()};img.onerror=()=>{clearTimeout(timeout);reject(Error('无法读取图片，请确认是可公开访问的图片链接'))};img.src=url});if(img.naturalWidth*img.naturalHeight>40000000)throw Error('图片尺寸过大');
+ profileDraft[kind+'_url']=url;profileDraft[kind+'Url']=url;profileDraft[kind+'_path']='';profileDraft[kind+'Data']='';renderProfileEditor();
+ }catch(e){toast(e.message)}
+}
+
+const openReading=window.MimuCarousel.init({esc,ic,openModal,isAdmin,getContent:readMarketContent});
 
 // 启动初始化
 (async()=>{
