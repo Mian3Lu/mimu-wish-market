@@ -12,4 +12,5 @@ for(const f of (await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql
 }
 try{await db.exec(await readFile('tests/upgrade-permissions.sql','utf8'))}catch(e){console.error('FAIL assertion:',e.message,'context:',e.where||e.detail||'');process.exit(1)}
 console.log('PASS profile, spoiler, cross-user, likes/favorites, claim limit, restore and audit assertions');
+try{await db.exec(await readFile('tests/followup-permissions.sql','utf8'));console.log('PASS short posts/claims, profile URLs, admin covenant permissions and version history')}catch(e){console.error('FAIL follow-up:',e.message);process.exit(1)}
 await db.close();
