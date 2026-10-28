@@ -64,3 +64,10 @@
 - 本机 ?preview=1 是隔离的可操作演示，互动和资料只保存在 mimu_local_preview，不调用 Auth、数据库或 Storage。绝不能自动把演示数据导入云端。
 - 常规合作使用 feature/* + PR，先同步 main；已部署迁移只新增、不回改。共享 market.js 前先划定函数范围，避免两人同时格式化或移动整个文件。
 - 本次会话用户明确授权直接修改正式站点且不要测试分支，属于此次发布例外；原站点的网址不变。详细审查、测试和限制见 docs/UPGRADE-2026-10-27.md。
+
+## 2026-10-28 后续修复
+
+- validated-media v2 校验 JPEG/PNG/WebP；Safari WebP 编码不可用时回退 JPEG。不可恢复旧 WebP-only 的客户端/服务端假设。
+- profiles 的 avatar_url/cover_url 可存 HTTPS 外部图片，与各自 Storage path 互斥，仍只限本人管理。
+- 市集公约使用 market_documents 与 save_market_covenant；编辑仅限数据库管理员，保留版本和审计。不要把前端按钮作为授权。
+- 底栏固定容器 bottomNavHost 不参与 renderNav 重建；空 feed 必须保持自然高度，避免 1px 网格裁断空状态。

@@ -15,8 +15,8 @@
 <title>mimu. ｜ 愿望市集 · 创作者接单版</title>
 <!-- 引入 Supabase JS 客户端库 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0"></script>
-<link rel="stylesheet" href="/assets/app/market.css?v=20261027.2">
-<link rel="stylesheet" href="/assets/app/editorial.css?v=20261027.2">
+<link rel="stylesheet" href="/assets/app/market.css?v=20261028.1">
+<link rel="stylesheet" href="/assets/app/editorial.css?v=20261028.1">
 </head>
 <body>
 <div class="preview-banner" id="previewBanner" hidden>本机演示 · 资料与互动仅保存在当前浏览器，不连接云端</div>
@@ -24,17 +24,17 @@
  <div class="header-inner">
   <a class="brand" href="#" id="brand-home" aria-label="mimu. 愿望市集 首页"><span class="brand-name">mimu<span class="dot">.</span></span><span class="brand-sub"><span>WISH MARKET</span><span>灵 感 正 在 发 生</span></span></a>
   <label class="site-search" aria-label="搜索许愿帖子"><span data-icon="search"></span><input id="searchInput" placeholder="搜索主题美化、世界书、灵感…" autocomplete="off"><button class="clear-search" id="clearSearch" type="button" aria-label="清除搜索" data-icon="x"></button></label>
-  <div class="header-actions"><button type="button" class="round-btn search-trigger" id="mobileSearchButton" aria-label="搜索" title="搜索"><span data-icon="search"></span></button><button type="button" class="round-btn admin-entry" id="adminEntry" aria-label="管理员入口" title="管理员入口" data-action="adminEntry"><span data-icon="shield"></span></button><button type="button" class="round-btn" id="themeToggle" aria-label="切换夜间模式" title="切换夜间模式"><span data-icon="moon"></span></button><button type="button" class="header-post" data-action="create"><span data-icon="plus"></span>发布愿望</button></div>
+  <div class="header-actions"><button type="button" class="round-btn search-trigger" id="mobileSearchButton" aria-label="搜索" title="搜索"><span data-icon="search"></span></button><button type="button" class="round-btn" id="themeToggle" aria-label="切换夜间模式" title="切换夜间模式"><span data-icon="moon"></span></button><button type="button" class="header-post" data-action="create"><span data-icon="plus"></span>发布愿望</button></div>
  </div>
 </header>
 <div class="category-strip"><div class="category-inner"><div class="category-list" id="categoryTabs" role="tablist" aria-label="愿望分类"></div><button class="category-arrow" id="categoryNext" aria-label="查看更多分类"><span data-icon="chevron-right"></span></button></div></div>
-<div class="admin-notice" id="adminNotice" role="status"><span data-icon="shield-check"></span><span><strong>云端管理员模式</strong> 已开启 · 可审核、删除帖子和留言</span><button type="button" data-action="adminDashboard">管理后台</button><button type="button" data-action="adminLogout">退出</button></div>
+
 <div class="page-layout">
  <aside class="left-panel"><p class="left-title">EXPLORE / 探索</p><div class="left-nav" id="sideNav"></div><div class="left-small"><b>一个愿望，也值得被认真对待。</b><br>你来提出灵感，创作者认领，让每个小想法慢慢发生。</div></aside>
  <main class="feed-area" id="mainContent">
   <section class="welcome carousel" id="welcome" aria-roledescription="轮播" aria-label="市集介绍">
-   <div id="heroSlides"></div>
-   <div class="carousel-tools"><button type="button" id="heroPrevious" aria-label="上一张"><span data-icon="arrow-left"></span></button><div id="heroIndicators" class="carousel-indicators"></div><button type="button" id="heroNext" aria-label="下一张"><span data-icon="arrow-right"></span></button><button type="button" id="heroPause" aria-label="暂停自动轮播">暂停</button></div>
+   <div id="heroSlides" class="hero-track" tabindex="0" aria-label="左右滑动浏览市集介绍"></div>
+   <div class="carousel-access"><button type="button" id="heroPrevious" aria-label="上一张"><span data-icon="arrow-left"></span></button><button type="button" id="heroNext" aria-label="下一张"><span data-icon="arrow-right"></span></button><button type="button" id="heroPause" aria-label="暂停自动轮播"><span data-icon="pause"></span></button><span class="sr-only" id="heroStatus" aria-live="off"></span></div>
   </section>
   <section id="profilePage" class="profile-page hide" aria-label="我的私人主页"></section>
   <div id="mobileSearchWrap"></div>
@@ -43,12 +43,12 @@
  </main>
  <aside class="right-panel"><section class="aside-card"><h3 class="aside-title"><span data-icon="sparkles"></span> 市集的今日份心动</h3><p>这里没有排名算法。愿望默认按照发布时间，从新到旧排列。</p><div class="stats-grid" id="statsBox"></div></section><section class="aside-card"><h3 class="aside-title"><span data-icon="route"></span> 一个愿望的旅程</h3><div class="tip-point"><span data-icon="pen-line"></span>许愿者发布帖子</div><div class="tip-point"><span data-icon="hand-heart"></span>创作者留言接单</div><div class="tip-point"><span data-icon="brush"></span>更新为「制作中」</div><div class="tip-point"><span data-icon="check-circle"></span>完工后附上文件位置</div><p style="margin-top:13px">资源文件统一存放在你们指定的地方，这里只负责记录进度与入口。</p></section><section class="aside-card"><h3 class="aside-title"><span data-icon="bookmark"></span> 市集小提示</h3><p>支持匿名许愿，也可以署名。接单前请把想法和制作范围沟通清楚；分享聊天截图时，记得遮盖隐私信息。</p></section></aside>
 </div>
-<nav class="mobile-tabbar" aria-label="底部导航" id="bottomNav"></nav>
+<div class="bottom-nav-host" id="bottomNavHost"><nav class="mobile-tabbar" aria-label="底部导航" id="bottomNav"></nav></div>
 <button class="float-top" id="backToTop" aria-label="回到顶部"><span data-icon="arrow-up"></span></button>
 <div id="modalRoot" class="modal-root" role="presentation"><div class="modal-backdrop" data-action="close"></div><section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 class="modal-title" id="modalTitle"></h2><button type="button" class="close-modal" data-action="close" aria-label="关闭"><span data-icon="x"></span></button></div><div class="modal-scroll" id="modalBody"></div></section></div>
 <div id="toastHost" class="toast-host" aria-live="polite"></div>
-<script src="/assets/app/content.js?v=20261027.2"></script>
-<script src="/assets/app/carousel.js?v=20261027.2"></script>
-<script src="/assets/app/market.js?v=20261027.2"></script>
+<script src="/assets/app/content.js?v=20261028.1"></script>
+<script src="/assets/app/carousel.js?v=20261028.1"></script>
+<script src="/assets/app/market.js?v=20261028.1"></script>
 </body>
 </html>
