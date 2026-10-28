@@ -120,3 +120,7 @@ profiles、收藏、点赞和 my_market_history 汇总按 auth.uid 隔离，资�
 迁移以本地隔离 PostgreSQL 引擎进行了权限断言，脚本见 tests/upgrade-permissions.sql；真实多连接并发、真实 Auth 邮件绑定和 iPhone Safari 仍须独立核验。用户本次明确要求直接修改生产而不要测试分支，故不再创建 Supabase 分支。
 
 部署与兼容回滚顺序见 docs/DEPLOYMENT.md；匿名数据不会按昵称重绑或从浏览器擅自导入。
+
+## 2026-10-28 图片兼容与公约
+
+validated-media v2 支持检验后的 JPEG/PNG/WebP，Safari Canvas 回退 JPEG；profile-media 仍私有且禁止客户端直接 INSERT。profiles 的头像和背景现在可选本人 Storage 路径或 HTTPS URL，二者互斥。公约使用 market_documents，只有数据库管理员能通过 save_market_covenant 更新，旧版本保存于 private.market_document_versions，revision 防止互相覆盖。迁移、本地权限测试和回退限制详见 docs/FOLLOWUP-2026-10-28.md。
