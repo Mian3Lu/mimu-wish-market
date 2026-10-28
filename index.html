@@ -15,10 +15,11 @@
 <title>mimu. ｜ 愿望市集 · 创作者接单版</title>
 <!-- 引入 Supabase JS 客户端库 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0"></script>
-<link rel="stylesheet" href="/assets/app/market.css?v=20261028.1">
-<link rel="stylesheet" href="/assets/app/editorial.css?v=20261028.1">
+<link rel="stylesheet" href="/assets/app/market.css?v=20261028.2">
+<link rel="stylesheet" href="/assets/app/editorial.css?v=20261028.2">
 </head>
 <body>
+<div id="pageScroll" class="page-scroll">
 <div class="preview-banner" id="previewBanner" hidden>本机演示 · 资料与互动仅保存在当前浏览器，不连接云端</div>
 <header class="site-header">
  <div class="header-inner">
@@ -43,12 +44,13 @@
  </main>
  <aside class="right-panel"><section class="aside-card"><h3 class="aside-title"><span data-icon="sparkles"></span> 市集的今日份心动</h3><p>这里没有排名算法。愿望默认按照发布时间，从新到旧排列。</p><div class="stats-grid" id="statsBox"></div></section><section class="aside-card"><h3 class="aside-title"><span data-icon="route"></span> 一个愿望的旅程</h3><div class="tip-point"><span data-icon="pen-line"></span>许愿者发布帖子</div><div class="tip-point"><span data-icon="hand-heart"></span>创作者留言接单</div><div class="tip-point"><span data-icon="brush"></span>更新为「制作中」</div><div class="tip-point"><span data-icon="check-circle"></span>完工后附上文件位置</div><p style="margin-top:13px">资源文件统一存放在你们指定的地方，这里只负责记录进度与入口。</p></section><section class="aside-card"><h3 class="aside-title"><span data-icon="bookmark"></span> 市集小提示</h3><p>支持匿名许愿，也可以署名。接单前请把想法和制作范围沟通清楚；分享聊天截图时，记得遮盖隐私信息。</p></section></aside>
 </div>
+</div>
 <div class="bottom-nav-host" id="bottomNavHost"><nav class="mobile-tabbar" aria-label="底部导航" id="bottomNav"></nav></div>
 <button class="float-top" id="backToTop" aria-label="回到顶部"><span data-icon="arrow-up"></span></button>
 <div id="modalRoot" class="modal-root" role="presentation"><div class="modal-backdrop" data-action="close"></div><section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><h2 class="modal-title" id="modalTitle"></h2><button type="button" class="close-modal" data-action="close" aria-label="关闭"><span data-icon="x"></span></button></div><div class="modal-scroll" id="modalBody"></div></section></div>
 <div id="toastHost" class="toast-host" aria-live="polite"></div>
-<script src="/assets/app/content.js?v=20261028.1"></script>
-<script src="/assets/app/carousel.js?v=20261028.1"></script>
-<script src="/assets/app/market.js?v=20261028.1"></script>
+<script src="/assets/app/content.js?v=20261028.2"></script>
+<script src="/assets/app/carousel.js?v=20261028.2"></script>
+<script src="/assets/app/market.js?v=20261028.2"></script>
 </body>
 </html>
